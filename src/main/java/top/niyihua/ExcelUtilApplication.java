@@ -13,51 +13,18 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 public class ExcelUtilApplication {
 
+    private static List<ExData> readData = null;
+
     public static void main(String[] args) throws Exception {
-        System.setProperty("java.awt.headless", "false");
-        ExcelReader reader = ExcelUtil.getReader("D://aa.xlsx", 0);
-        reader.addHeaderAlias("代码", "code");
-        reader.addHeaderAlias("名称", "name");
-        reader.addHeaderAlias("涨幅%", "upV");
-        reader.addHeaderAlias("涨速%", "upSpeed");
-        reader.addHeaderAlias("开盘%", "openP");
-        reader.addHeaderAlias("现量", "nowVolume");
-        reader.addHeaderAlias("流通市值Z", "liuTongZ");
-        reader.addHeaderAlias("总金额", "totalMoney");
-        reader.addHeaderAlias("开盘金额", "openMoney");
-        reader.addHeaderAlias("封单额", "closeVar");
-        reader.addHeaderAlias("流通市值", "flowMarketVaR");
-        reader.addHeaderAlias("换手%", "changeHand");
-        reader.addHeaderAlias("现价", "nowPrice");
-        List<ExData> all = reader.readAll(ExData.class);
-        reader.close();
-        ExData exData = all.get(0);
-        ExDataCalculate convert = BgConverter.convert(exData);
-        ExData revert = BgConverter.revert(convert);
-        List<ExData> collect = all.stream().map(BgConverter::convert).map(BgConverter::revert).collect(Collectors.toList());
-        ExcelWriter writer = ExcelUtil.getWriter(new File("D://cc.xlsx"));
-        writer.addHeaderAlias("code", "代码");
-        writer.addHeaderAlias("name", "名称");
-        writer.addHeaderAlias("upV", "涨幅%");
-        writer.addHeaderAlias("upSpeed", "涨速%");
-        writer.addHeaderAlias("openP", "开盘%");
-        writer.addHeaderAlias("nowVolume", "现量");
-        writer.addHeaderAlias("liuTongZ", "流通市值Z");
-        writer.addHeaderAlias("totalMoney", "总金额");
-        writer.addHeaderAlias("openMoney", "开盘金额");
-        writer.addHeaderAlias("closeVar", "封单额");
-        writer.addHeaderAlias("flowMarketVaR", "流通市值");
-        writer.addHeaderAlias("changeHand", "换手%");
-        writer.addHeaderAlias("nowPrice", "现价");
-        writer.write(collect);
-        writer.close();
-        final JFrame jf = new JFrame("测试窗口");
+        final JFrame jf = new JFrame("Excel小工具");
         jf.setSize(400, 250);
         jf.setLocationRelativeTo(null);
         jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -109,7 +76,7 @@ public class ExcelUtilApplication {
         // 添加可用的文件过滤器（FileNameExtensionFilter 的第一个参数是描述, 后面是需要过滤的文件扩展名 可变参数）
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("zip(*.zip, *.rar)", "zip", "rar"));
         // 设置默认使用的文件过滤器
-        fileChooser.setFileFilter(new FileNameExtensionFilter("image(*.jpg, *.png, *.gif)", "jpg", "png", "gif"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("excel(*.xlsx, *.xls)", "xlsx", "xls"));
 
         // 打开文件选择框（线程将被阻塞, 直到选择框被关闭）
         int result = fileChooser.showOpenDialog(parent);
@@ -117,11 +84,31 @@ public class ExcelUtilApplication {
         if (result == JFileChooser.APPROVE_OPTION) {
             // 如果点击了"确定", 则获取选择的文件路径
             File file = fileChooser.getSelectedFile();
-
-            // 如果允许选择多个文件, 则通过下面方法获取选择的所有文件
-            // File[] files = fileChooser.getSelectedFiles();
-
-            msgTextArea.append("打开文件: " + file.getAbsolutePath() + "\n\n");
+            try(InputStream is = new FileInputStream(file);){
+                ExcelReader reader = ExcelUtil.getReader(is);
+                reader.addHeaderAlias("代码", "code");
+                reader.addHeaderAlias("名称", "name");
+                reader.addHeaderAlias("涨幅%", "upV");
+                reader.addHeaderAlias("涨速%", "upSpeed");
+                reader.addHeaderAlias("开盘%", "openP");
+                reader.addHeaderAlias("现量", "nowVolume");
+                reader.addHeaderAlias("流通市值Z", "liuTongZ");
+                reader.addHeaderAlias("总金额", "totalMoney");
+                reader.addHeaderAlias("开盘金额", "openMoney");
+                reader.addHeaderAlias("封单额", "closeVar");
+                reader.addHeaderAlias("流通市值", "flowMarketVaR");
+                reader.addHeaderAlias("换手%", "changeHand");
+                reader.addHeaderAlias("现价", "nowPrice");
+                msgTextArea.append("读取中....... " + "\n\n");
+                List<ExData> exData = reader.readAll(ExData.class);
+                // 如果允许选择多个文件, 则通过下面方法获取选择的所有文件
+                // File[] files = fileChooser.getSelectedFiles();
+                readData = exData;
+                reader.close();
+                msgTextArea.append("读取成功: " + file.getAbsolutePath() + "\n\n");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 
@@ -133,7 +120,7 @@ public class ExcelUtilApplication {
         JFileChooser fileChooser = new JFileChooser();
 
         // 设置打开文件选择框后默认输入的文件名
-        fileChooser.setSelectedFile(new File("测试文件.zip"));
+        fileChooser.setSelectedFile(new File("output.xlsx"));
 
         // 打开文件选择框（线程将被阻塞, 直到选择框被关闭）
         int result = fileChooser.showSaveDialog(parent);
@@ -141,9 +128,27 @@ public class ExcelUtilApplication {
         if (result == JFileChooser.APPROVE_OPTION) {
             // 如果点击了"保存", 则获取选择的保存路径
             File file = fileChooser.getSelectedFile();
-            msgTextArea.append("保存到文件: " + file.getAbsolutePath() + "\n\n");
+            msgTextArea.append("文件处理中............. " + "\n\n");
+            ExcelWriter writer = ExcelUtil.getWriter(file.getAbsolutePath());
+            writer.addHeaderAlias("code", "代码");
+            writer.addHeaderAlias("name", "名称");
+            writer.addHeaderAlias("upV", "涨幅%");
+            writer.addHeaderAlias("upSpeed", "涨速%");
+            writer.addHeaderAlias("openP", "开盘%");
+            writer.addHeaderAlias("nowVolume", "现量");
+            writer.addHeaderAlias("liuTongZ", "流通市值Z");
+            writer.addHeaderAlias("totalMoney", "总金额");
+            writer.addHeaderAlias("openMoney", "开盘金额");
+            writer.addHeaderAlias("closeVar", "封单额");
+            writer.addHeaderAlias("flowMarketVaR", "流通d市值");
+            writer.addHeaderAlias("changeHand", "换手%");
+            writer.addHeaderAlias("nowPrice", "现价");
+            List<ExDataCalculate> dt = readData.stream().map(BgConverter::convert).collect(Collectors.toList());
+            List<ExData> collect = dt.stream().map(BgConverter::revert).collect(Collectors.toList());
+            writer.write(collect);
+            writer.close();
+            msgTextArea.append("处理完毕，文件保存到: " + file.getAbsolutePath() + "\n\n");
         }
     }
-
 
 }
