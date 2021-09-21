@@ -36,7 +36,7 @@
                             <archive>
                                 <manifest>
                                     <mainClass>
-                                        top.niyihua.ExcelUtilApplication
+                                        org.niyihua.ExcelUtilApplication
                                     </mainClass>
                                 </manifest>
                             </archive>

@@ -1,11 +1,11 @@
-package top.niyihua;
+package org.niyihua;
 
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
-import top.niyihua.converter.BgConverter;
-import top.niyihua.entity.ExData;
-import top.niyihua.entity.ExDataCalculate;
+import org.niyihua.converter.BgConverter;
+import org.niyihua.entity.ExData;
+import org.niyihua.entity.ExDataCalculate;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -15,8 +15,10 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ExcelUtilApplication {
@@ -99,6 +101,15 @@ public class ExcelUtilApplication {
                 reader.addHeaderAlias("流通市值", "flowMarketVaR");
                 reader.addHeaderAlias("换手%", "changeHand");
                 reader.addHeaderAlias("现价", "nowPrice");
+                reader.addHeaderAlias("量比", "liangBi");
+                reader.addHeaderAlias("最高%", "bestHighPer");
+                reader.addHeaderAlias("最高", "bestHigh");
+                reader.addHeaderAlias("最低%", "bestLowPer");
+                reader.addHeaderAlias("最低", "bestLow");
+                reader.addHeaderAlias("今开", "nowOpen");
+                reader.addHeaderAlias("总量", "allVolume");
+                reader.addHeaderAlias("卖价", "salePrice");
+                reader.addHeaderAlias("昨收", "yesterdayEnd");
                 msgTextArea.append("读取中....... " + "\n\n");
                 List<ExData> exData = reader.readAll(ExData.class);
                 // 如果允许选择多个文件, 则通过下面方法获取选择的所有文件
@@ -130,22 +141,37 @@ public class ExcelUtilApplication {
             File file = fileChooser.getSelectedFile();
             msgTextArea.append("文件处理中............. " + "\n\n");
             ExcelWriter writer = ExcelUtil.getWriter(file.getAbsolutePath());
-            writer.addHeaderAlias("code", "代码");
-            writer.addHeaderAlias("name", "名称");
-            writer.addHeaderAlias("upV", "涨幅%");
-            writer.addHeaderAlias("upSpeed", "涨速%");
-            writer.addHeaderAlias("openP", "开盘%");
-            writer.addHeaderAlias("nowVolume", "现量");
-            writer.addHeaderAlias("liuTongZ", "流通市值Z");
-            writer.addHeaderAlias("totalMoney", "总金额");
-            writer.addHeaderAlias("openMoney", "开盘金额");
-            writer.addHeaderAlias("closeVar", "封单额");
-            writer.addHeaderAlias("flowMarketVaR", "流通d市值");
-            writer.addHeaderAlias("changeHand", "换手%");
-            writer.addHeaderAlias("nowPrice", "现价");
+            List<Map<String,Object>> ds = new ArrayList<>();
             List<ExDataCalculate> dt = readData.stream().map(BgConverter::convert).collect(Collectors.toList());
-            List<ExData> collect = dt.stream().map(BgConverter::revert).collect(Collectors.toList());
-            writer.write(collect);
+//            List<ExData> collect = dt.stream().map(BgConverter::revert).collect(Collectors.toList());
+            dt.forEach(t->{
+                Map<String,Object> map  = new LinkedHashMap<>();
+                map.put("代码",t.getCode());
+                map.put("名称",t.getName());
+                map.put("涨幅%",t.getUpV()==null?"--":t.getUpV().doubleValue());
+                map.put("涨速%",t.getUpSpeed()==null?"--":t.getUpSpeed().doubleValue());
+                map.put("开盘%",t.getOpenP()==null?"--":t.getOpenP().doubleValue());
+                map.put("现量",t.getNowVolume()==null?"--":t.getNowVolume().doubleValue());
+                map.put("流通市值Z",t.getLiuTongZ()==null?"--":t.getLiuTongZ().toString()+"亿");
+                map.put("总金额",t.getTotalMoney()==null?"--":t.getTotalMoney().doubleValue());
+                map.put("开盘金额",t.getOpenMoney()==null?"--":t.getOpenMoney().doubleValue());
+                map.put("封单额",t.getCloseVar()==null?"--":t.getCloseVar().doubleValue());
+                map.put("流通市值",t.getFlowMarketVaR()==null?"--":t.getFlowMarketVaR().doubleValue());
+                map.put("换手%", t.getChangeHand()==null?"--":t.getChangeHand().doubleValue());
+                map.put("现价",t.getNowPrice()==null?"--":t.getNowPrice().doubleValue());
+                map.put("量比",t.getLiangBi()==null?"--":t.getLiangBi().doubleValue());
+                map.put("最高%",t.getBestHighPer()==null?"--":t.getBestHighPer().doubleValue());
+                map.put("最高",t.getBestHigh()==null?"--":t.getBestHigh().doubleValue());
+                map.put("最低%",t.getBestLowPer()==null?"--":t.getBestLowPer().doubleValue());
+                map.put("最低",t.getBestLow()==null?"--":t.getBestLow().doubleValue());
+                map.put("今开",t.getNowOpen()==null?"--":t.getNowOpen().doubleValue());
+                map.put("总量",t.getAllVolume()==null?"--":t.getAllVolume().doubleValue());
+                map.put("卖价",t.getSalePrice()==null?"--":t.getSalePrice().doubleValue());
+                map.put("昨收",t.getYesterdayEnd()==null?"--":t.getYesterdayEnd().doubleValue());
+
+                ds.add(map);
+            });
+            writer.write(ds);
             writer.close();
             msgTextArea.append("处理完毕，文件保存到: " + file.getAbsolutePath() + "\n\n");
         }

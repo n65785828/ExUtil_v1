@@ -1,4 +1,4 @@
-package top.niyihua.entity;
+package org.niyihua.entity;
 
 
 
@@ -19,6 +19,15 @@ public class ExDataCalculate {
     private BigDecimal flowMarketVaR;//流通市值
     private BigDecimal changeHand;// 换手%
     private BigDecimal nowPrice;//现价
+    private BigDecimal liangBi;//量比
+    private BigDecimal bestHighPer;//最高%
+    private BigDecimal bestHigh;//最高
+    private BigDecimal bestLowPer;//最低%
+    private BigDecimal bestLow;//最低
+    private BigDecimal nowOpen;//今开
+    private BigDecimal allVolume;//总量
+    private BigDecimal salePrice;//卖价
+    private BigDecimal yesterdayEnd;//昨收
 
     public String getCode() {
         return code;
@@ -122,5 +131,77 @@ public class ExDataCalculate {
 
     public void setNowPrice(BigDecimal nowPrice) {
         this.nowPrice = nowPrice;
+    }
+
+    public BigDecimal getLiangBi() {
+        return liangBi;
+    }
+
+    public void setLiangBi(BigDecimal liangBi) {
+        this.liangBi = liangBi;
+    }
+
+    public BigDecimal getBestHighPer() {
+        return bestHighPer;
+    }
+
+    public void setBestHighPer(BigDecimal bestHighPer) {
+        this.bestHighPer = bestHighPer;
+    }
+
+    public BigDecimal getBestHigh() {
+        return bestHigh;
+    }
+
+    public void setBestHigh(BigDecimal bestHigh) {
+        this.bestHigh = bestHigh;
+    }
+
+    public BigDecimal getBestLowPer() {
+        return bestLowPer;
+    }
+
+    public void setBestLowPer(BigDecimal bestLowPer) {
+        this.bestLowPer = bestLowPer;
+    }
+
+    public BigDecimal getBestLow() {
+        return bestLow;
+    }
+
+    public void setBestLow(BigDecimal bestLow) {
+        this.bestLow = bestLow;
+    }
+
+    public BigDecimal getNowOpen() {
+        return nowOpen;
+    }
+
+    public void setNowOpen(BigDecimal nowOpen) {
+        this.nowOpen = nowOpen;
+    }
+
+    public BigDecimal getAllVolume() {
+        return allVolume;
+    }
+
+    public void setAllVolume(BigDecimal allVolume) {
+        this.allVolume = allVolume;
+    }
+
+    public BigDecimal getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(BigDecimal salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    public BigDecimal getYesterdayEnd() {
+        return yesterdayEnd;
+    }
+
+    public void setYesterdayEnd(BigDecimal yesterdayEnd) {
+        this.yesterdayEnd = yesterdayEnd;
     }
 }

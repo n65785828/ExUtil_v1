@@ -1,10 +1,10 @@
-package top.niyihua.converter;
+package org.niyihua.converter;
 
 
 
 import cn.hutool.core.util.StrUtil;
-import top.niyihua.entity.ExData;
-import top.niyihua.entity.ExDataCalculate;
+import org.niyihua.entity.ExData;
+import org.niyihua.entity.ExDataCalculate;
 
 import java.math.BigDecimal;
 
@@ -85,6 +85,63 @@ public class BgConverter {
             exDataCalculate.setNowPrice(null);
         }else{
             exDataCalculate.setNowPrice(new BigDecimal(exData.getNowPrice()));
+        }
+
+        //量比
+        if(StrUtil.isBlank(exData.getLiangBi())||(StrUtil.isNotBlank(exData.getLiangBi())&&exData.getLiangBi().contains("--"))){
+            exDataCalculate.setLiangBi(null);
+        }else{
+            exDataCalculate.setLiangBi(new BigDecimal(exData.getLiangBi()));
+        }
+
+
+        //最高%
+        if(StrUtil.isBlank(exData.getBestHighPer())||(StrUtil.isNotBlank(exData.getBestHighPer())&&exData.getBestHighPer().contains("--"))){
+            exDataCalculate.setBestHighPer(null);
+        }else{
+            exDataCalculate.setBestHighPer(new BigDecimal(exData.getBestHighPer()));
+        }
+
+        //最高
+        if(StrUtil.isBlank(exData.getBestHigh())||(StrUtil.isNotBlank(exData.getBestHigh())&&exData.getBestHigh().contains("--"))){
+            exDataCalculate.setBestHigh(null);
+        }else{
+            exDataCalculate.setBestHigh(new BigDecimal(exData.getBestHigh()));
+        }
+
+        //最低%
+        if(StrUtil.isBlank(exData.getBestLowPer())||(StrUtil.isNotBlank(exData.getBestLowPer())&&exData.getBestLowPer().contains("--"))){
+            exDataCalculate.setBestLowPer(null);
+        }else{
+            exDataCalculate.setBestLowPer(new BigDecimal(exData.getBestLowPer()));
+        }
+
+        //今开
+        if(StrUtil.isBlank(exData.getNowOpen())||(StrUtil.isNotBlank(exData.getNowOpen())&&exData.getNowOpen().contains("--"))){
+            exDataCalculate.setNowOpen(null);
+        }else{
+            exDataCalculate.setNowOpen(new BigDecimal(exData.getNowOpen()));
+        }
+
+        //今开
+        if(StrUtil.isBlank(exData.getAllVolume())||(StrUtil.isNotBlank(exData.getAllVolume())&&exData.getAllVolume().contains("--"))){
+            exDataCalculate.setAllVolume(null);
+        }else{
+            exDataCalculate.setAllVolume(new BigDecimal(exData.getAllVolume()));
+        }
+
+        //卖价
+        if(StrUtil.isBlank(exData.getSalePrice())||(StrUtil.isNotBlank(exData.getSalePrice())&&exData.getSalePrice().contains("--"))){
+            exDataCalculate.setSalePrice(null);
+        }else{
+            exDataCalculate.setSalePrice(new BigDecimal(exData.getSalePrice()));
+        }
+
+        //昨收
+        if(StrUtil.isBlank(exData.getYesterdayEnd())||(StrUtil.isNotBlank(exData.getYesterdayEnd())&&exData.getYesterdayEnd().contains("--"))){
+            exDataCalculate.setYesterdayEnd(null);
+        }else{
+            exDataCalculate.setYesterdayEnd(new BigDecimal(exData.getYesterdayEnd()));
         }
 
         return exDataCalculate;
