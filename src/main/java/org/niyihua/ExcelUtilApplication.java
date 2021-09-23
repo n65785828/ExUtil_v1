@@ -31,16 +31,17 @@ public class ExcelUtilApplication {
     private static final JTextArea msgTextArea = new JTextArea(10, 30);
     private static final JTextArea overTextArea = new JTextArea(5, 30);
     private static final JFrame jf = new JFrame("Excel小工具");
+    private static final List<JCheckBox> J_CHECK_BOXES = new ArrayList<>();
+    private static final JTextField inputDesign=new JTextField(30);
 
     public static void main(String[] args) throws Exception {
-        jf.setSize(400, 250);
+        jf.setSize(400, 280);
         jf.setLocationRelativeTo(null);
         jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         JPanel cards=new JPanel(new CardLayout());
         JPanel panel = new JPanel();
         JPanel panel2 = new JPanel();
-        JPanel panel3 = new JPanel();
 
 
         dsignPanel2(panel2);
@@ -64,7 +65,6 @@ public class ExcelUtilApplication {
         panel.add(next);
         cards.add(panel,"card1");    //向卡片式布局面板中添加面板1
         cards.add(panel2,"card2");    //向卡片式布局面板中添加面板2
-        cards.add(panel3,"card3");    //向卡片式布局面板中添加面板3
         CardLayout cl=(CardLayout)(cards.getLayout());
         cl.show(cards,"card1");    //调用show()方法显示面板2
         next.addActionListener((e)->{
@@ -75,16 +75,39 @@ public class ExcelUtilApplication {
     }
 
     private static void dsignPanel2(JPanel panel2) {
+        panel2.setLayout(null);
         JLabel label1=new JLabel("普通标签:");
+        JLabel label2=new JLabel("普通标签2:");
+        JLabel label3=new JLabel("普通标签3:");
+
+        JCheckBox jCheckBox01 = new JCheckBox("菠萝");
+        JCheckBox jCheckBox02 = new JCheckBox("香蕉");
+        JCheckBox jCheckBox03 = new JCheckBox("草莓");
+        JCheckBox jCheckBox04 = new JCheckBox("鸡蛋");
+        JCheckBox jCheckBox05 = new JCheckBox("螺丝");
+        JCheckBox jCheckBox06 = new JCheckBox("龙虾");
+        label1.setLayout(null);
+        label1.setBounds(10,10,90,15);
+        jCheckBox01.setBounds(70+30,10,60,15);
+        jCheckBox02.setBounds(130+30,10,60,15);
+        jCheckBox03.setBounds(200+30,10,60,15);
+        label2.setBounds(10,30,100,15);
+        jCheckBox04.setBounds(70+30,30,60,15);
+        jCheckBox05.setBounds(130+30,30,60,15);
+        jCheckBox06.setBounds(200+30,30,60,15);
+        label3.setBounds(10,50,100,22);
         panel2.add(label1);
-        List<JCheckBox> list = new ArrayList<>();
-        list.add(new JCheckBox("菠萝"));
-        list.add(new JCheckBox("香蕉"));
-        list.add(new JCheckBox("雪梨"));
-        list.add(new JCheckBox("荔枝"));
-        list.add(new JCheckBox("橘子"));
-        list.add(new JCheckBox("苹果"));
-        list.forEach(t->{
+        panel2.add(label2);
+        panel2.add(label3);
+        inputDesign.setBounds(70+30,50,200,22);
+        panel2.add(inputDesign);
+        J_CHECK_BOXES.add(jCheckBox01);
+        J_CHECK_BOXES.add(jCheckBox02);
+        J_CHECK_BOXES.add(jCheckBox03);
+        J_CHECK_BOXES.add(jCheckBox04);
+        J_CHECK_BOXES.add(jCheckBox05);
+        J_CHECK_BOXES.add(jCheckBox06);
+        J_CHECK_BOXES.forEach(t->{
             t.addChangeListener(new ChangeListener() {
                 @Override
                 public void stateChanged(ChangeEvent e) {
@@ -93,8 +116,14 @@ public class ExcelUtilApplication {
                     System.out.println(checkBox.getText() + " 是否选中: " + checkBox.isSelected());
                 }
             });
-            panel2.add(t);
         });
+        panel2.add(jCheckBox01);
+        panel2.add(jCheckBox02);
+        panel2.add(jCheckBox03);
+        panel2.add(jCheckBox04);
+        panel2.add(jCheckBox05);
+        panel2.add(jCheckBox06);
+        overTextArea.setBounds(10,80,360,100);
         panel2.add(overTextArea);
         JButton saveBtn = new JButton("保存");
         saveBtn.addActionListener(new ActionListener() {
@@ -103,6 +132,7 @@ public class ExcelUtilApplication {
                 showFileSaveDialog(jf, overTextArea);
             }
         });
+        saveBtn.setBounds(160,200,80,35);
         panel2.add(saveBtn);
     }
 
@@ -156,6 +186,70 @@ public class ExcelUtilApplication {
             e.printStackTrace();
         }
     }
+
+    /*
+     * 选择文件保存路径
+     */
+    private static void showFileSaveDialog(Component parent, JTextArea msgTextArea) {
+        // 创建一个默认的文件选取器
+        JFileChooser fileChooser = new JFileChooser();
+
+        // 设置打开文件选择框后默认输入的文件名
+        fileChooser.setSelectedFile(new File("output.xlsx"));
+
+        // 打开文件选择框（线程将被阻塞, 直到选择框被关闭）
+        int result = fileChooser.showSaveDialog(parent);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            // 如果点击了"保存", 则获取选择的保存路径
+            File file = fileChooser.getSelectedFile();
+            msgTextArea.append("文件处理中............. " + "\n\n");
+            new Thread(()->{
+                dealWithExcel(msgTextArea, file);
+            }).start();
+        }
+    }
+
+    private static void dealWithExcel(JTextArea msgTextArea, File file) {
+        ExcelWriter writer = ExcelUtil.getWriter(file.getAbsolutePath());
+        List<Map<String,Object>> ds = new ArrayList<>();
+        List<ExDataCalculate> dt = readData.stream().map(BgConverter::convert).collect(Collectors.toList());
+//            List<ExData> collect = dt.stream().map(BgConverter::revert).collect(Collectors.toList());
+        dt.forEach(t->{
+            Map<String,Object> map  = new LinkedHashMap<>();
+            map.put("代码",t.getCode());
+            map.put("名称",t.getName());
+            map.put("涨幅%",t.getUpV()==null?"--":t.getUpV().doubleValue());
+            map.put("涨速%",t.getUpSpeed()==null?"--":t.getUpSpeed().doubleValue());
+            map.put("开盘%",t.getOpenP()==null?"--":t.getOpenP().doubleValue());
+            map.put("现量",t.getNowVolume()==null?"--":t.getNowVolume().doubleValue());
+            map.put("流通市值Z",t.getLiuTongZ()==null?"--":t.getLiuTongZ().toString()+"亿");
+            map.put("总金额",t.getTotalMoney()==null?"--":t.getTotalMoney().doubleValue());
+            map.put("开盘金额",t.getOpenMoney()==null?"--":t.getOpenMoney().doubleValue());
+            map.put("封单额",t.getCloseVar()==null?"--":t.getCloseVar().doubleValue());
+            map.put("流通市值",t.getFlowMarketVaR()==null?"--":t.getFlowMarketVaR().toString()+"亿");
+            map.put("换手%", t.getChangeHand()==null?"--":t.getChangeHand().doubleValue());
+            map.put("现价",t.getNowPrice()==null?"--":t.getNowPrice().doubleValue());
+            map.put("量比",t.getLiangBi()==null?"--":t.getLiangBi().doubleValue());
+            map.put("最高%",t.getBestHighPer()==null?"--":t.getBestHighPer().doubleValue());
+            map.put("最高",t.getBestHigh()==null?"--":t.getBestHigh().doubleValue());
+            map.put("最低%",t.getBestLowPer()==null?"--":t.getBestLowPer().doubleValue());
+            map.put("最低",t.getBestLow()==null?"--":t.getBestLow().doubleValue());
+            map.put("今开",t.getNowOpen()==null?"--":t.getNowOpen().doubleValue());
+            map.put("总量",t.getAllVolume()==null?"--":t.getAllVolume().intValue());
+            map.put("卖价",t.getSalePrice()==null?"--":t.getSalePrice().doubleValue());
+            map.put("昨收",t.getYesterdayEnd()==null?"--":t.getYesterdayEnd().doubleValue());
+            map.put("1.1倍",t.getOnePointOneTime()==null?"--":t.getOnePointTwoTime().doubleValue());
+            map.put("1.2倍",t.getOnePointTwoTime()==null?"--":t.getOnePointTwoTime().doubleValue());
+            map.put("删选条件",t.getRemark());
+            ds.add(map);
+        });
+        writer.write(ds);
+        writer.close();
+        msgTextArea.append("处理完毕，文件保存到: " + file.getAbsolutePath() + "\n\n");
+    }
+
+
 
     private static void setAlias(ExcelReader reader) {
         reader.addHeaderAlias("代码", "code");
@@ -278,67 +372,4 @@ public class ExcelUtilApplication {
         reader.addHeaderAlias("自选价","r95");
         reader.addHeaderAlias("自选收益%","r96");
     }
-
-    /*
-     * 选择文件保存路径
-     */
-    private static void showFileSaveDialog(Component parent, JTextArea msgTextArea) {
-        // 创建一个默认的文件选取器
-        JFileChooser fileChooser = new JFileChooser();
-
-        // 设置打开文件选择框后默认输入的文件名
-        fileChooser.setSelectedFile(new File("output.xlsx"));
-
-        // 打开文件选择框（线程将被阻塞, 直到选择框被关闭）
-        int result = fileChooser.showSaveDialog(parent);
-
-        if (result == JFileChooser.APPROVE_OPTION) {
-            // 如果点击了"保存", 则获取选择的保存路径
-            File file = fileChooser.getSelectedFile();
-            msgTextArea.append("文件处理中............. " + "\n\n");
-            new Thread(()->{
-                dealWithExcel(msgTextArea, file);
-            }).start();
-        }
-    }
-
-    private static void dealWithExcel(JTextArea msgTextArea, File file) {
-        ExcelWriter writer = ExcelUtil.getWriter(file.getAbsolutePath());
-        List<Map<String,Object>> ds = new ArrayList<>();
-        List<ExDataCalculate> dt = readData.stream().map(BgConverter::convert).collect(Collectors.toList());
-//            List<ExData> collect = dt.stream().map(BgConverter::revert).collect(Collectors.toList());
-        dt.forEach(t->{
-            Map<String,Object> map  = new LinkedHashMap<>();
-            map.put("代码",t.getCode());
-            map.put("名称",t.getName());
-            map.put("涨幅%",t.getUpV()==null?"--":t.getUpV().doubleValue());
-            map.put("涨速%",t.getUpSpeed()==null?"--":t.getUpSpeed().doubleValue());
-            map.put("开盘%",t.getOpenP()==null?"--":t.getOpenP().doubleValue());
-            map.put("现量",t.getNowVolume()==null?"--":t.getNowVolume().doubleValue());
-            map.put("流通市值Z",t.getLiuTongZ()==null?"--":t.getLiuTongZ().toString()+"亿");
-            map.put("总金额",t.getTotalMoney()==null?"--":t.getTotalMoney().doubleValue());
-            map.put("开盘金额",t.getOpenMoney()==null?"--":t.getOpenMoney().doubleValue());
-            map.put("封单额",t.getCloseVar()==null?"--":t.getCloseVar().doubleValue());
-            map.put("流通市值",t.getFlowMarketVaR()==null?"--":t.getFlowMarketVaR().toString()+"亿");
-            map.put("换手%", t.getChangeHand()==null?"--":t.getChangeHand().doubleValue());
-            map.put("现价",t.getNowPrice()==null?"--":t.getNowPrice().doubleValue());
-            map.put("量比",t.getLiangBi()==null?"--":t.getLiangBi().doubleValue());
-            map.put("最高%",t.getBestHighPer()==null?"--":t.getBestHighPer().doubleValue());
-            map.put("最高",t.getBestHigh()==null?"--":t.getBestHigh().doubleValue());
-            map.put("最低%",t.getBestLowPer()==null?"--":t.getBestLowPer().doubleValue());
-            map.put("最低",t.getBestLow()==null?"--":t.getBestLow().doubleValue());
-            map.put("今开",t.getNowOpen()==null?"--":t.getNowOpen().doubleValue());
-            map.put("总量",t.getAllVolume()==null?"--":t.getAllVolume().intValue());
-            map.put("卖价",t.getSalePrice()==null?"--":t.getSalePrice().doubleValue());
-            map.put("昨收",t.getYesterdayEnd()==null?"--":t.getYesterdayEnd().doubleValue());
-            map.put("1.1倍",t.getOnePointOneTime()==null?"--":t.getOnePointTwoTime().doubleValue());
-            map.put("1.2倍",t.getOnePointTwoTime()==null?"--":t.getOnePointTwoTime().doubleValue());
-            map.put("删选条件",t.getRemark());
-            ds.add(map);
-        });
-        writer.write(ds);
-        writer.close();
-        msgTextArea.append("处理完毕，文件保存到: " + file.getAbsolutePath() + "\n\n");
-    }
-
 }
