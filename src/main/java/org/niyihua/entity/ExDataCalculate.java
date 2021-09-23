@@ -28,6 +28,9 @@ public class ExDataCalculate {
     private BigDecimal allVolume;//总量
     private BigDecimal salePrice;//卖价
     private BigDecimal yesterdayEnd;//昨收
+    private BigDecimal onePointOneTime;//1.1倍
+    private BigDecimal onePointTwoTime;//1.1倍
+    private String remark;//删选备注
 
     public String getCode() {
         return code;
@@ -203,5 +206,29 @@ public class ExDataCalculate {
 
     public void setYesterdayEnd(BigDecimal yesterdayEnd) {
         this.yesterdayEnd = yesterdayEnd;
+    }
+
+    public BigDecimal getOnePointOneTime() {
+        return onePointOneTime;
+    }
+
+    public void setOnePointOneTime(BigDecimal onePointOneTime) {
+        this.onePointOneTime = onePointOneTime;
+    }
+
+    public BigDecimal getOnePointTwoTime() {
+        return onePointTwoTime;
+    }
+
+    public void setOnePointTwoTime(BigDecimal onePointTwoTime) {
+        this.onePointTwoTime = onePointTwoTime;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

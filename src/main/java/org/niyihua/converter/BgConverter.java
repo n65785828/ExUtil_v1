@@ -116,6 +116,13 @@ public class BgConverter {
             exDataCalculate.setBestLowPer(new BigDecimal(exData.getBestLowPer()));
         }
 
+        //最低
+        if(StrUtil.isBlank(exData.getBestLow())||(StrUtil.isNotBlank(exData.getBestLow())&&exData.getBestLow().contains("--"))){
+            exDataCalculate.setBestLow(null);
+        }else{
+            exDataCalculate.setBestLow(new BigDecimal(exData.getBestLow()));
+        }
+
         //今开
         if(StrUtil.isBlank(exData.getNowOpen())||(StrUtil.isNotBlank(exData.getNowOpen())&&exData.getNowOpen().contains("--"))){
             exDataCalculate.setNowOpen(null);
@@ -123,7 +130,7 @@ public class BgConverter {
             exDataCalculate.setNowOpen(new BigDecimal(exData.getNowOpen()));
         }
 
-        //今开
+        //总量
         if(StrUtil.isBlank(exData.getAllVolume())||(StrUtil.isNotBlank(exData.getAllVolume())&&exData.getAllVolume().contains("--"))){
             exDataCalculate.setAllVolume(null);
         }else{

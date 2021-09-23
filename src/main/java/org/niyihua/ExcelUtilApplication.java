@@ -8,6 +8,8 @@ import org.niyihua.entity.ExData;
 import org.niyihua.entity.ExDataCalculate;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -25,16 +27,25 @@ public class ExcelUtilApplication {
 
     private static List<ExData> readData = null;
 
+    private static JButton next ;
+    private static final JTextArea msgTextArea = new JTextArea(10, 30);
+    private static final JTextArea overTextArea = new JTextArea(5, 30);
+    private static final JFrame jf = new JFrame("Excel小工具");
+
     public static void main(String[] args) throws Exception {
-        final JFrame jf = new JFrame("Excel小工具");
         jf.setSize(400, 250);
         jf.setLocationRelativeTo(null);
         jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+        JPanel cards=new JPanel(new CardLayout());
         JPanel panel = new JPanel();
+        JPanel panel2 = new JPanel();
+        JPanel panel3 = new JPanel();
+
+
+        dsignPanel2(panel2);
 
         // 创建文本区域, 用于显示相关信息
-        final JTextArea msgTextArea = new JTextArea(10, 30);
         msgTextArea.setLineWrap(true);
         panel.add(msgTextArea);
 
@@ -47,17 +58,52 @@ public class ExcelUtilApplication {
         });
         panel.add(openBtn);
 
+
+        next = new JButton("下一步");
+        next.setEnabled(false);
+        panel.add(next);
+        cards.add(panel,"card1");    //向卡片式布局面板中添加面板1
+        cards.add(panel2,"card2");    //向卡片式布局面板中添加面板2
+        cards.add(panel3,"card3");    //向卡片式布局面板中添加面板3
+        CardLayout cl=(CardLayout)(cards.getLayout());
+        cl.show(cards,"card1");    //调用show()方法显示面板2
+        next.addActionListener((e)->{
+            cl.show(cards,"card2");
+        });
+        jf.setContentPane(cards);
+        jf.setVisible(true);
+    }
+
+    private static void dsignPanel2(JPanel panel2) {
+        JLabel label1=new JLabel("普通标签:");
+        panel2.add(label1);
+        List<JCheckBox> list = new ArrayList<>();
+        list.add(new JCheckBox("菠萝"));
+        list.add(new JCheckBox("香蕉"));
+        list.add(new JCheckBox("雪梨"));
+        list.add(new JCheckBox("荔枝"));
+        list.add(new JCheckBox("橘子"));
+        list.add(new JCheckBox("苹果"));
+        list.forEach(t->{
+            t.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    // 获取事件源（即复选框本身）
+                    JCheckBox checkBox = (JCheckBox) e.getSource();
+                    System.out.println(checkBox.getText() + " 是否选中: " + checkBox.isSelected());
+                }
+            });
+            panel2.add(t);
+        });
+        panel2.add(overTextArea);
         JButton saveBtn = new JButton("保存");
         saveBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                showFileSaveDialog(jf, msgTextArea);
+                showFileSaveDialog(jf, overTextArea);
             }
         });
-        panel.add(saveBtn);
-
-        jf.setContentPane(panel);
-        jf.setVisible(true);
+        panel2.add(saveBtn);
     }
 
     /*
@@ -86,19 +132,28 @@ public class ExcelUtilApplication {
         if (result == JFileChooser.APPROVE_OPTION) {
             // 如果点击了"确定", 则获取选择的文件路径
             File file = fileChooser.getSelectedFile();
-            try(InputStream is = new FileInputStream(file);){
-                ExcelReader reader = ExcelUtil.getReader(is);
-                setAlias(reader);
-                msgTextArea.append("读取中....... " + "\n\n");
-                List<ExData> exData = reader.readAll(ExData.class);
-                // 如果允许选择多个文件, 则通过下面方法获取选择的所有文件
-                // File[] files = fileChooser.getSelectedFiles();
-                readData = exData;
-                reader.close();
-                msgTextArea.append("读取成功: " + file.getAbsolutePath() + "\n\n");
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+            msgTextArea.append("读取中....... " + "\n\n");
+            new Thread(()->{
+                readExcel(msgTextArea, file);
+            }).start();
+
+        }
+    }
+
+    private static void readExcel(JTextArea msgTextArea, File file) {
+        try(InputStream is = new FileInputStream(file)){
+            ExcelReader reader = ExcelUtil.getReader(is);
+            setAlias(reader);
+
+            List<ExData> exData = reader.readAll(ExData.class);
+            // 如果允许选择多个文件, 则通过下面方法获取选择的所有文件
+            // File[] files = fileChooser.getSelectedFiles();
+            readData = exData;
+            reader.close();
+            msgTextArea.append("读取成功: " + file.getAbsolutePath() + "\n\n");
+            next.setEnabled(true);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -241,41 +296,49 @@ public class ExcelUtilApplication {
             // 如果点击了"保存", 则获取选择的保存路径
             File file = fileChooser.getSelectedFile();
             msgTextArea.append("文件处理中............. " + "\n\n");
-            ExcelWriter writer = ExcelUtil.getWriter(file.getAbsolutePath());
-            List<Map<String,Object>> ds = new ArrayList<>();
-            List<ExDataCalculate> dt = readData.stream().map(BgConverter::convert).collect(Collectors.toList());
-//            List<ExData> collect = dt.stream().map(BgConverter::revert).collect(Collectors.toList());
-            dt.forEach(t->{
-                Map<String,Object> map  = new LinkedHashMap<>();
-                map.put("代码",t.getCode());
-                map.put("名称",t.getName());
-                map.put("涨幅%",t.getUpV()==null?"--":t.getUpV().doubleValue());
-                map.put("涨速%",t.getUpSpeed()==null?"--":t.getUpSpeed().doubleValue());
-                map.put("开盘%",t.getOpenP()==null?"--":t.getOpenP().doubleValue());
-                map.put("现量",t.getNowVolume()==null?"--":t.getNowVolume().doubleValue());
-                map.put("流通市值Z",t.getLiuTongZ()==null?"--":t.getLiuTongZ().toString()+"亿");
-                map.put("总金额",t.getTotalMoney()==null?"--":t.getTotalMoney().doubleValue());
-                map.put("开盘金额",t.getOpenMoney()==null?"--":t.getOpenMoney().doubleValue());
-                map.put("封单额",t.getCloseVar()==null?"--":t.getCloseVar().doubleValue());
-                map.put("流通市值",t.getFlowMarketVaR()==null?"--":t.getFlowMarketVaR().doubleValue());
-                map.put("换手%", t.getChangeHand()==null?"--":t.getChangeHand().doubleValue());
-                map.put("现价",t.getNowPrice()==null?"--":t.getNowPrice().doubleValue());
-                map.put("量比",t.getLiangBi()==null?"--":t.getLiangBi().doubleValue());
-                map.put("最高%",t.getBestHighPer()==null?"--":t.getBestHighPer().doubleValue());
-                map.put("最高",t.getBestHigh()==null?"--":t.getBestHigh().doubleValue());
-                map.put("最低%",t.getBestLowPer()==null?"--":t.getBestLowPer().doubleValue());
-                map.put("最低",t.getBestLow()==null?"--":t.getBestLow().doubleValue());
-                map.put("今开",t.getNowOpen()==null?"--":t.getNowOpen().doubleValue());
-                map.put("总量",t.getAllVolume()==null?"--":t.getAllVolume().doubleValue());
-                map.put("卖价",t.getSalePrice()==null?"--":t.getSalePrice().doubleValue());
-                map.put("昨收",t.getYesterdayEnd()==null?"--":t.getYesterdayEnd().doubleValue());
-
-                ds.add(map);
-            });
-            writer.write(ds);
-            writer.close();
-            msgTextArea.append("处理完毕，文件保存到: " + file.getAbsolutePath() + "\n\n");
+            new Thread(()->{
+                dealWithExcel(msgTextArea, file);
+            }).start();
         }
+    }
+
+    private static void dealWithExcel(JTextArea msgTextArea, File file) {
+        ExcelWriter writer = ExcelUtil.getWriter(file.getAbsolutePath());
+        List<Map<String,Object>> ds = new ArrayList<>();
+        List<ExDataCalculate> dt = readData.stream().map(BgConverter::convert).collect(Collectors.toList());
+//            List<ExData> collect = dt.stream().map(BgConverter::revert).collect(Collectors.toList());
+        dt.forEach(t->{
+            Map<String,Object> map  = new LinkedHashMap<>();
+            map.put("代码",t.getCode());
+            map.put("名称",t.getName());
+            map.put("涨幅%",t.getUpV()==null?"--":t.getUpV().doubleValue());
+            map.put("涨速%",t.getUpSpeed()==null?"--":t.getUpSpeed().doubleValue());
+            map.put("开盘%",t.getOpenP()==null?"--":t.getOpenP().doubleValue());
+            map.put("现量",t.getNowVolume()==null?"--":t.getNowVolume().doubleValue());
+            map.put("流通市值Z",t.getLiuTongZ()==null?"--":t.getLiuTongZ().toString()+"亿");
+            map.put("总金额",t.getTotalMoney()==null?"--":t.getTotalMoney().doubleValue());
+            map.put("开盘金额",t.getOpenMoney()==null?"--":t.getOpenMoney().doubleValue());
+            map.put("封单额",t.getCloseVar()==null?"--":t.getCloseVar().doubleValue());
+            map.put("流通市值",t.getFlowMarketVaR()==null?"--":t.getFlowMarketVaR().toString()+"亿");
+            map.put("换手%", t.getChangeHand()==null?"--":t.getChangeHand().doubleValue());
+            map.put("现价",t.getNowPrice()==null?"--":t.getNowPrice().doubleValue());
+            map.put("量比",t.getLiangBi()==null?"--":t.getLiangBi().doubleValue());
+            map.put("最高%",t.getBestHighPer()==null?"--":t.getBestHighPer().doubleValue());
+            map.put("最高",t.getBestHigh()==null?"--":t.getBestHigh().doubleValue());
+            map.put("最低%",t.getBestLowPer()==null?"--":t.getBestLowPer().doubleValue());
+            map.put("最低",t.getBestLow()==null?"--":t.getBestLow().doubleValue());
+            map.put("今开",t.getNowOpen()==null?"--":t.getNowOpen().doubleValue());
+            map.put("总量",t.getAllVolume()==null?"--":t.getAllVolume().intValue());
+            map.put("卖价",t.getSalePrice()==null?"--":t.getSalePrice().doubleValue());
+            map.put("昨收",t.getYesterdayEnd()==null?"--":t.getYesterdayEnd().doubleValue());
+            map.put("1.1倍",t.getOnePointOneTime()==null?"--":t.getOnePointTwoTime().doubleValue());
+            map.put("1.2倍",t.getOnePointTwoTime()==null?"--":t.getOnePointTwoTime().doubleValue());
+            map.put("删选条件",t.getRemark());
+            ds.add(map);
+        });
+        writer.write(ds);
+        writer.close();
+        msgTextArea.append("处理完毕，文件保存到: " + file.getAbsolutePath() + "\n\n");
     }
 
 }
