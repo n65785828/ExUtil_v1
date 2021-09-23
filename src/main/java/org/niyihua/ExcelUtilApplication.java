@@ -17,15 +17,46 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ExcelUtilApplication {
 
     private static List<ExData> readData = null;
+    private static JCheckBox jCheckBox00 = new JCheckBox("整数");
+
+    private static JCheckBox jCheckBox01 = new JCheckBox("1.1");
+    private static JCheckBox jCheckBox02 = new JCheckBox("1.2");
+    private static JCheckBox jCheckBox03 = new JCheckBox("最高");
+    private static JCheckBox jCheckBox04 = new JCheckBox("最低");
+    private static JCheckBox jCheckBox05 = new JCheckBox("今开");
+
+    private static JCheckBox jCheckBox11 = new JCheckBox("1.1");
+    private static JCheckBox jCheckBox12 = new JCheckBox("1.2");
+    private static JCheckBox jCheckBox13 = new JCheckBox("最高");
+    private static JCheckBox jCheckBox14 = new JCheckBox("最低");
+    private static JCheckBox jCheckBox15 = new JCheckBox("今开");
+
+    private static JCheckBox jCheckBox21 = new JCheckBox("1.1");
+    private static JCheckBox jCheckBox22 = new JCheckBox("1.2");
+    private static JCheckBox jCheckBox23 = new JCheckBox("最高");
+    private static JCheckBox jCheckBox24 = new JCheckBox("最低");
+    private static JCheckBox jCheckBox25 = new JCheckBox("今开");
+
+    private static JCheckBox jCheckBox31 = new JCheckBox("1.1");
+    private static JCheckBox jCheckBox32 = new JCheckBox("1.2");
+    private static JCheckBox jCheckBox33 = new JCheckBox("最高");
+    private static JCheckBox jCheckBox34 = new JCheckBox("最低");
+    private static JCheckBox jCheckBox35 = new JCheckBox("今开");
+
+    private static JCheckBox jCheckBox41 = new JCheckBox("1.1");
+    private static JCheckBox jCheckBox42 = new JCheckBox("1.2");
+    private static JCheckBox jCheckBox43 = new JCheckBox("最高");
+    private static JCheckBox jCheckBox44 = new JCheckBox("最低");
+    private static JCheckBox jCheckBox45 = new JCheckBox("今开");
+
 
     private static JButton next ;
     private static final JTextArea msgTextArea = new JTextArea(10, 30);
@@ -35,7 +66,7 @@ public class ExcelUtilApplication {
     private static final JTextField inputDesign=new JTextField(30);
 
     public static void main(String[] args) throws Exception {
-        jf.setSize(400, 280);
+        jf.setSize(600, 400);
         jf.setLocationRelativeTo(null);
         jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -76,37 +107,69 @@ public class ExcelUtilApplication {
 
     private static void dsignPanel2(JPanel panel2) {
         panel2.setLayout(null);
-        JLabel label1=new JLabel("普通标签:");
-        JLabel label2=new JLabel("普通标签2:");
-        JLabel label3=new JLabel("普通标签3:");
+        JLabel label1=new JLabel("整数:");
+        JLabel label2=new JLabel("反数:");
+        JLabel label3=new JLabel("对子数:");
+        JLabel label4=new JLabel("叠子数:");
+        JLabel label5=new JLabel("自定义数:");
+        JLabel label6=new JLabel("倍数:");
+        JLabel label7=new JLabel("阶梯数:");
 
-        JCheckBox jCheckBox01 = new JCheckBox("菠萝");
-        JCheckBox jCheckBox02 = new JCheckBox("香蕉");
-        JCheckBox jCheckBox03 = new JCheckBox("草莓");
-        JCheckBox jCheckBox04 = new JCheckBox("鸡蛋");
-        JCheckBox jCheckBox05 = new JCheckBox("螺丝");
-        JCheckBox jCheckBox06 = new JCheckBox("龙虾");
         label1.setLayout(null);
         label1.setBounds(10,10,90,15);
-        jCheckBox01.setBounds(70+30,10,60,15);
-        jCheckBox02.setBounds(130+30,10,60,15);
-        jCheckBox03.setBounds(200+30,10,60,15);
+        jCheckBox00.setBounds(70+30,10,60,15);
         label2.setBounds(10,30,100,15);
-        jCheckBox04.setBounds(70+30,30,60,15);
-        jCheckBox05.setBounds(130+30,30,60,15);
-        jCheckBox06.setBounds(200+30,30,60,15);
+        jCheckBox01.setBounds(70+30,30,60,15);
+        jCheckBox02.setBounds(130+30,30,60,15);
+        jCheckBox03.setBounds(200+30,30,60,15);
+        jCheckBox04.setBounds(270+30,30,60,15);
+        jCheckBox05.setBounds(340+30,30,60,15);
         label3.setBounds(10,50,100,22);
+        jCheckBox11.setBounds(70+30, 50,60,15);
+        jCheckBox12.setBounds(130+30,50,60,15);
+        jCheckBox13.setBounds(200+30,50,60,15);
+        jCheckBox14.setBounds(270+30,50,60,15);
+        jCheckBox15.setBounds(340+30,50,60,15);
+
+        label4.setBounds(10,70,100,22);
+        jCheckBox21.setBounds(70+30, 70,60,15);
+        jCheckBox22.setBounds(130+30,70,60,15);
+        jCheckBox23.setBounds(200+30,70,60,15);
+        jCheckBox24.setBounds(270+30,70,60,15);
+        jCheckBox25.setBounds(340+30,70,60,15);
+
+        label5.setBounds(10,100,70,23);
+        inputDesign.setBounds(85,100,200,22);
+        panel2.add(inputDesign);
+
+        label6.setBounds(10,125,70,15);
+        jCheckBox31.setBounds(70+30, 125,60,15);
+        jCheckBox32.setBounds(130+30,125,60,15);
+        jCheckBox33.setBounds(200+30,125,60,15);
+        jCheckBox34.setBounds(270+30,125,60,15);
+        jCheckBox35.setBounds(340+30,125,60,15);
+
+        label7.setBounds(10,145,145,15);
+        jCheckBox41.setBounds(70+30, 145,60,15);
+        jCheckBox42.setBounds(130+30,145,60,15);
+        jCheckBox43.setBounds(200+30,145,60,15);
+        jCheckBox44.setBounds(270+30,145,60,15);
+        jCheckBox45.setBounds(340+30,145,60,15);
+
+        panel2.add(label5);
         panel2.add(label1);
         panel2.add(label2);
         panel2.add(label3);
-        inputDesign.setBounds(70+30,50,200,22);
-        panel2.add(inputDesign);
+        panel2.add(label4);
+        panel2.add(label6);
+        panel2.add(label7);
+
         J_CHECK_BOXES.add(jCheckBox01);
         J_CHECK_BOXES.add(jCheckBox02);
         J_CHECK_BOXES.add(jCheckBox03);
         J_CHECK_BOXES.add(jCheckBox04);
         J_CHECK_BOXES.add(jCheckBox05);
-        J_CHECK_BOXES.add(jCheckBox06);
+        J_CHECK_BOXES.add(jCheckBox00);
         J_CHECK_BOXES.forEach(t->{
             t.addChangeListener(new ChangeListener() {
                 @Override
@@ -117,13 +180,42 @@ public class ExcelUtilApplication {
                 }
             });
         });
+        panel2.add(jCheckBox00);
+
         panel2.add(jCheckBox01);
         panel2.add(jCheckBox02);
         panel2.add(jCheckBox03);
         panel2.add(jCheckBox04);
         panel2.add(jCheckBox05);
-        panel2.add(jCheckBox06);
-        overTextArea.setBounds(10,80,360,100);
+
+        panel2.add(jCheckBox11);
+        panel2.add(jCheckBox12);
+        panel2.add(jCheckBox13);
+        panel2.add(jCheckBox14);
+        panel2.add(jCheckBox15);
+
+        panel2.add(jCheckBox21);
+        panel2.add(jCheckBox22);
+        panel2.add(jCheckBox23);
+        panel2.add(jCheckBox24);
+        panel2.add(jCheckBox25);
+
+        panel2.add(jCheckBox31);
+        panel2.add(jCheckBox32);
+        panel2.add(jCheckBox33);
+        panel2.add(jCheckBox34);
+        panel2.add(jCheckBox35);
+
+
+        panel2.add(jCheckBox41);
+        panel2.add(jCheckBox42);
+        panel2.add(jCheckBox43);
+        panel2.add(jCheckBox44);
+        panel2.add(jCheckBox45);
+
+
+
+        overTextArea.setBounds(10,180,360,80);
         panel2.add(overTextArea);
         JButton saveBtn = new JButton("保存");
         saveBtn.addActionListener(new ActionListener() {
@@ -132,7 +224,7 @@ public class ExcelUtilApplication {
                 showFileSaveDialog(jf, overTextArea);
             }
         });
-        saveBtn.setBounds(160,200,80,35);
+        saveBtn.setBounds(160,280,80,35);
         panel2.add(saveBtn);
     }
 
@@ -213,9 +305,25 @@ public class ExcelUtilApplication {
     private static void dealWithExcel(JTextArea msgTextArea, File file) {
         ExcelWriter writer = ExcelUtil.getWriter(file.getAbsolutePath());
         List<Map<String,Object>> ds = new ArrayList<>();
+        LinkedHashSet<ExDataCalculate> resultSet = new LinkedHashSet<>();
         List<ExDataCalculate> dt = readData.stream().map(BgConverter::convert).collect(Collectors.toList());
 //            List<ExData> collect = dt.stream().map(BgConverter::revert).collect(Collectors.toList());
+        //整数
         dt.forEach(t->{
+            if((!t.getCode().startsWith("30"))&&t.getOnePointOneTime()!=null&&new BigDecimal(t.getOnePointOneTime().intValue()).compareTo(t.getOnePointOneTime())==0){
+                t.setRemark(t.getRemark()+"代码非30开始，1.1倍为整数;");
+                resultSet.add(t);
+            }else{
+                if(t.getOnePointTwoTime()!=null&&new BigDecimal(t.getOnePointTwoTime().intValue()).compareTo(t.getOnePointTwoTime())==0){
+                    t.setRemark(t.getRemark()+"代码30开始，1.2倍为整数;");
+                    resultSet.add(t);
+                }
+            }
+        });
+
+
+
+        resultSet.forEach(t->{
             Map<String,Object> map  = new LinkedHashMap<>();
             map.put("代码",t.getCode());
             map.put("名称",t.getName());
@@ -239,7 +347,7 @@ public class ExcelUtilApplication {
             map.put("总量",t.getAllVolume()==null?"--":t.getAllVolume().intValue());
             map.put("卖价",t.getSalePrice()==null?"--":t.getSalePrice().doubleValue());
             map.put("昨收",t.getYesterdayEnd()==null?"--":t.getYesterdayEnd().doubleValue());
-            map.put("1.1倍",t.getOnePointOneTime()==null?"--":t.getOnePointTwoTime().doubleValue());
+            map.put("1.1倍",t.getOnePointOneTime()==null?"--":t.getOnePointOneTime().doubleValue());
             map.put("1.2倍",t.getOnePointTwoTime()==null?"--":t.getOnePointTwoTime().doubleValue());
             map.put("删选条件",t.getRemark());
             ds.add(map);

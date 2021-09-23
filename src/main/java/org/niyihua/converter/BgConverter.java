@@ -9,6 +9,8 @@ import org.niyihua.entity.ExDataCalculate;
 import java.math.BigDecimal;
 
 public class BgConverter {
+    private static final BigDecimal opOne = new BigDecimal("1.1");
+    private static final BigDecimal opTwo = new BigDecimal("1.2");
     public static ExDataCalculate convert(ExData exData){
         ExDataCalculate exDataCalculate = new ExDataCalculate();
         exDataCalculate.setCode(exData.getCode());
@@ -150,6 +152,15 @@ public class BgConverter {
         }else{
             exDataCalculate.setYesterdayEnd(new BigDecimal(exData.getYesterdayEnd()));
         }
+
+        //1.1
+        if(exDataCalculate.getNowPrice()!=null){
+            exDataCalculate.setOnePointOneTime(exDataCalculate.getNowPrice().multiply(opOne));
+            exDataCalculate.setOnePointTwoTime(exDataCalculate.getNowPrice().multiply(opTwo));
+        }
+
+
+        //1.2
 
         return exDataCalculate;
     }

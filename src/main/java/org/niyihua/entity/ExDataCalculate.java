@@ -30,7 +30,7 @@ public class ExDataCalculate {
     private BigDecimal yesterdayEnd;//昨收
     private BigDecimal onePointOneTime;//1.1倍
     private BigDecimal onePointTwoTime;//1.1倍
-    private String remark;//删选备注
+    private String remark = "";//删选备注
 
     public String getCode() {
         return code;
