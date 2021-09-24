@@ -1,5 +1,6 @@
 package org.niyihua;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
@@ -8,14 +9,17 @@ import org.niyihua.entity.ExData;
 import org.niyihua.entity.ExDataCalculate;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.*;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +28,9 @@ import static org.niyihua.util.NumberUtil.*;
 public class ExcelUtilApplication {
 
     private static List<ExData> readData = null;
+    private static int count = 0;
+    private static int count1 = 0;
+    private static Map<String,JCheckBox> record = new HashMap<>();
     private static JCheckBox jCheckBox00 = new JCheckBox("整数");
 
     //反数
@@ -69,37 +76,94 @@ public class ExcelUtilApplication {
     private static JCheckBox jCheckBox55 = new JCheckBox("今开");
 
     static {
-        jCheckBox00.setSelected(true);
-        jCheckBox01.setSelected(true);
-        jCheckBox02.setSelected(true);
-        jCheckBox03.setSelected(true);
-        jCheckBox04.setSelected(true);
-        jCheckBox05.setSelected(true);
-        jCheckBox11.setSelected(true);
-        jCheckBox12.setSelected(true);
-        jCheckBox13.setSelected(true);
-        jCheckBox14.setSelected(true);
-        jCheckBox15.setSelected(true);
-        jCheckBox21.setSelected(true);
-        jCheckBox22.setSelected(true);
-        jCheckBox23.setSelected(true);
-        jCheckBox24.setSelected(true);
-        jCheckBox25.setSelected(true);
-        jCheckBox31.setSelected(true);
-        jCheckBox32.setSelected(true);
-        jCheckBox33.setSelected(true);
-        jCheckBox34.setSelected(true);
-        jCheckBox35.setSelected(true);
-        jCheckBox41.setSelected(true);
-        jCheckBox42.setSelected(true);
-        jCheckBox43.setSelected(true);
-        jCheckBox44.setSelected(true);
-        jCheckBox45.setSelected(true);
-        jCheckBox51.setSelected(true);
-        jCheckBox52.setSelected(true);
-        jCheckBox53.setSelected(true);
-        jCheckBox54.setSelected(true);
-        jCheckBox55.setSelected(true);
+        record.put("00",jCheckBox00);
+        record.put("01",jCheckBox01);
+        record.put("02",jCheckBox02);
+        record.put("03",jCheckBox03);
+        record.put("04",jCheckBox04);
+        record.put("05",jCheckBox05);
+        record.put("11",jCheckBox11);
+        record.put("12",jCheckBox12);
+        record.put("13",jCheckBox13);
+        record.put("14",jCheckBox14);
+        record.put("15",jCheckBox15);
+        record.put("21",jCheckBox21);
+        record.put("22",jCheckBox22);
+        record.put("23",jCheckBox23);
+        record.put("24",jCheckBox24);
+        record.put("25",jCheckBox25);
+        record.put("31",jCheckBox31);
+        record.put("32",jCheckBox32);
+        record.put("33",jCheckBox33);
+        record.put("34",jCheckBox34);
+        record.put("35",jCheckBox35);
+        record.put("41",jCheckBox41);
+        record.put("42",jCheckBox42);
+        record.put("43",jCheckBox43);
+        record.put("44",jCheckBox44);
+        record.put("45",jCheckBox45);
+        record.put("51",jCheckBox51);
+        record.put("52",jCheckBox52);
+        record.put("53",jCheckBox53);
+        record.put("54",jCheckBox54);
+        record.put("55",jCheckBox55);
+        File file = new File("excelUtilConf.conf");
+        if(!file.exists()){
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            try(FileInputStream fileInputStream = new FileInputStream(file)) {
+                byte[] buf = new byte[1024];
+                int len = 0;
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                while ((len=fileInputStream.read(buf))!=-1){
+                    byteArrayOutputStream.write(buf,0,len);
+                }
+                String str = new String(byteArrayOutputStream.toByteArray());
+                String[] s = str.split(" ");
+                for (String s0 :s){
+                    record.get(s0).setSelected(true);
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+//        jCheckBox00.setSelected(true);
+//        jCheckBox01.setSelected(true);
+//        jCheckBox02.setSelected(true);
+//        jCheckBox03.setSelected(true);
+//        jCheckBox04.setSelected(true);
+//        jCheckBox05.setSelected(true);
+//        jCheckBox11.setSelected(true);
+//        jCheckBox12.setSelected(true);
+//        jCheckBox13.setSelected(true);
+//        jCheckBox14.setSelected(true);
+//        jCheckBox15.setSelected(true);
+//        jCheckBox21.setSelected(true);
+//        jCheckBox22.setSelected(true);
+//        jCheckBox23.setSelected(true);
+//        jCheckBox24.setSelected(true);
+//        jCheckBox25.setSelected(true);
+//        jCheckBox31.setSelected(true);
+//        jCheckBox32.setSelected(true);
+//        jCheckBox33.setSelected(true);
+//        jCheckBox34.setSelected(true);
+//        jCheckBox35.setSelected(true);
+//        jCheckBox41.setSelected(true);
+//        jCheckBox42.setSelected(true);
+//        jCheckBox43.setSelected(true);
+//        jCheckBox44.setSelected(true);
+//        jCheckBox45.setSelected(true);
+//        jCheckBox51.setSelected(true);
+//        jCheckBox52.setSelected(true);
+//        jCheckBox53.setSelected(true);
+//        jCheckBox54.setSelected(true);
+//        jCheckBox55.setSelected(true);
     }
 
 
@@ -214,22 +278,8 @@ public class ExcelUtilApplication {
         panel2.add(label6);
         panel2.add(label7);
 
-//        J_CHECK_BOXES.add(jCheckBox01);
-//        J_CHECK_BOXES.add(jCheckBox02);
-//        J_CHECK_BOXES.add(jCheckBox03);
-//        J_CHECK_BOXES.add(jCheckBox04);
-//        J_CHECK_BOXES.add(jCheckBox05);
-//        J_CHECK_BOXES.add(jCheckBox00);
-//        J_CHECK_BOXES.forEach(t->{
-//            t.addChangeListener(new ChangeListener() {
-//                @Override
-//                public void stateChanged(ChangeEvent e) {
-//                    // 获取事件源（即复选框本身）
-//                    JCheckBox checkBox = (JCheckBox) e.getSource();
-//                    System.out.println(checkBox.getText() + " 是否选中: " + checkBox.isSelected());
-//                }
-//            });
-//        });
+        cd();
+
         panel2.add(jCheckBox00);
 
         panel2.add(jCheckBox01);
@@ -283,6 +333,8 @@ public class ExcelUtilApplication {
         saveBtn.setBounds(160,280,80,35);
         panel2.add(saveBtn);
     }
+
+
 
     /*
      * 打开文件
@@ -382,6 +434,8 @@ public class ExcelUtilApplication {
             map.put("流通市值",t.getFlowMarketVaR()==null?"--":t.getFlowMarketVaR().toString()+"亿");
             map.put("换手%", t.getChangeHand()==null?"--":t.getChangeHand().doubleValue());
             map.put("现价",t.getNowPrice()==null?"--":t.getNowPrice().doubleValue());
+            map.put("1.1倍",t.getOnePointOneTime()==null?"--":t.getOnePointOneTime().doubleValue());
+            map.put("1.2倍",t.getOnePointTwoTime()==null?"--":t.getOnePointTwoTime().doubleValue());
             map.put("量比",t.getLiangBi()==null?"--":t.getLiangBi().doubleValue());
             map.put("最高%",t.getBestHighPer()==null?"--":t.getBestHighPer().doubleValue());
             map.put("最高",t.getBestHigh()==null?"--":t.getBestHigh().doubleValue());
@@ -391,13 +445,25 @@ public class ExcelUtilApplication {
             map.put("总量",t.getAllVolume()==null?"--":t.getAllVolume().intValue());
             map.put("卖价",t.getSalePrice()==null?"--":t.getSalePrice().doubleValue());
             map.put("昨收",t.getYesterdayEnd()==null?"--":t.getYesterdayEnd().doubleValue());
-            map.put("1.1倍",t.getOnePointOneTime()==null?"--":t.getOnePointOneTime().doubleValue());
-            map.put("1.2倍",t.getOnePointTwoTime()==null?"--":t.getOnePointTwoTime().doubleValue());
             map.put("删选条件",t.getRemark());
             ds.add(map);
         });
         writer.write(ds);
         writer.close();
+        try(FileOutputStream fileOutputStream = new FileOutputStream(new File("excelUtilConf.conf"))) {
+            Set<String> strings = record.keySet();
+            for (String ss:strings) {
+                JCheckBox jCheckBox = record.get(ss);
+                if (jCheckBox.isSelected()){
+                    fileOutputStream.write((ss+" ").getBytes(StandardCharsets.UTF_8));
+                }
+            }
+            fileOutputStream.flush();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         msgTextArea.append("处理完毕，文件保存到: " + file.getAbsolutePath() + "\n\n");
     }
 
@@ -488,6 +554,84 @@ public class ExcelUtilApplication {
                 t.setRemark(t.getRemark()+"今开是倍数;");
             }
         });
+
+        //对子数
+        dt.forEach(t->{
+            if(jCheckBox11.isSelected()&&isDuiZiNumber(t.getOnePointOneTime())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"1.1倍是对子数;");
+            }
+            if(jCheckBox12.isSelected()&&isDuiZiNumber(t.getOnePointTwoTime())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"1.2倍是对子数;");
+            }
+            if(jCheckBox13.isSelected()&&isDuiZiNumber(t.getBestHigh())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"最高是对子数;");
+            }
+            if(jCheckBox14.isSelected()&&isDuiZiNumber(t.getBestLow())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"最低是对子数;");
+            }
+            if(jCheckBox15.isSelected()&&isDuiZiNumber(t.getNowOpen())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"今开是对子数;");
+            }
+        });
+
+        //叠子数
+        dt.forEach(t->{
+            if(jCheckBox21.isSelected()&&isDDNumber(t.getOnePointOneTime())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"1.1倍是叠子数;");
+            }
+            if(jCheckBox22.isSelected()&&isDDNumber(t.getOnePointTwoTime())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"1.2倍是叠子数;");
+            }
+            if(jCheckBox23.isSelected()&&isDDNumber(t.getBestHigh())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"最高是叠子数;");
+            }
+            if(jCheckBox24.isSelected()&&isDDNumber(t.getBestLow())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"最低是叠子数;");
+            }
+            if(jCheckBox25.isSelected()&&isDDNumber(t.getNowOpen())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"今开是叠子数;");
+            }
+        });
+
+        //自定义数
+        String text = inputDesign.getText();
+        if(StrUtil.isNotEmpty(StrUtil.trim(text))){
+            String[] arrays = StrUtil.trim(text).split(" ");
+            HashSet<String> set = new HashSet<>();
+            set.addAll(Arrays.asList(arrays));
+            dt.forEach(t->{
+                if(jCheckBox51.isSelected()&&t.getOnePointOneTime()!=null&&set.contains(t.getOnePointOneTime().toString())){
+                    resultSet.add(t);
+                    t.setRemark(t.getRemark()+"1.1倍包含于自定义数（"+text+"）中;");
+                }
+                if(jCheckBox52.isSelected()&&t.getOnePointTwoTime()!=null&&set.contains(t.getOnePointTwoTime().toString())){
+                    resultSet.add(t);
+                    t.setRemark(t.getRemark()+"1.2倍含于自定义数（"+text+"）中;");
+                }
+                if(jCheckBox53.isSelected()&&t.getBestHigh()!=null&&set.contains(t.getBestHigh().toString())){
+                    resultSet.add(t);
+                    t.setRemark(t.getRemark()+"最高含于自定义数（"+text+"）中;");
+                }
+                if(jCheckBox54.isSelected()&&t.getBestLow()!=null&&set.contains(t.getBestLow().toString())){
+                    resultSet.add(t);
+                    t.setRemark(t.getRemark()+"最低含于自定义数（"+text+"）中;");
+                }
+                if(jCheckBox55.isSelected()&&t.getNowOpen()!=null&&set.contains(t.getNowOpen().toString())){
+                    resultSet.add(t);
+                    t.setRemark(t.getRemark()+"今开含于自定义数（"+text+"）中;");
+                }
+            });
+        }
 
     }
 
@@ -612,5 +756,38 @@ public class ExcelUtilApplication {
         reader.addHeaderAlias("自选日","r94");
         reader.addHeaderAlias("自选价","r95");
         reader.addHeaderAlias("自选收益%","r96");
+    }
+    private static void cd() {
+        jCheckBox00.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                count++;
+                if(count==10){
+                    JOptionPane.showMessageDialog(null, "别点啦，小仙女");
+                }
+                if(count==20){
+                    JOptionPane.showMessageDialog(null, "你再点我就生气喽");
+                }
+                if(count==30){
+                    JOptionPane.showMessageDialog(null, "骗你的啦，我没生气哦");
+                }
+                if(count==40){
+                    JOptionPane.showMessageDialog(null, "小仙女,我喜欢你♥＾▽＾♥");
+                }
+                if(count==500){
+                    JOptionPane.showMessageDialog(null, "♥♥♥♥ i love u ♥♥♥♥");
+                }
+            }
+        });
+
+        jCheckBox45.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                count1++;
+                if(count1==52000){
+                    JOptionPane.showMessageDialog(null, "♥♥♥♥ Marry me ,Little fairy ♥♥♥♥");
+                }
+            }
+        });
     }
 }
