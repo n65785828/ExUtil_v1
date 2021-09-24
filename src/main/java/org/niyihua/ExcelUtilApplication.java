@@ -8,8 +8,6 @@ import org.niyihua.entity.ExData;
 import org.niyihua.entity.ExDataCalculate;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -21,48 +19,95 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import static org.niyihua.util.NumberUtil.*;
 
 public class ExcelUtilApplication {
 
     private static List<ExData> readData = null;
     private static JCheckBox jCheckBox00 = new JCheckBox("整数");
 
+    //反数
     private static JCheckBox jCheckBox01 = new JCheckBox("1.1");
     private static JCheckBox jCheckBox02 = new JCheckBox("1.2");
     private static JCheckBox jCheckBox03 = new JCheckBox("最高");
     private static JCheckBox jCheckBox04 = new JCheckBox("最低");
     private static JCheckBox jCheckBox05 = new JCheckBox("今开");
 
+    //对字数
     private static JCheckBox jCheckBox11 = new JCheckBox("1.1");
     private static JCheckBox jCheckBox12 = new JCheckBox("1.2");
     private static JCheckBox jCheckBox13 = new JCheckBox("最高");
     private static JCheckBox jCheckBox14 = new JCheckBox("最低");
     private static JCheckBox jCheckBox15 = new JCheckBox("今开");
 
+    //叠字数
     private static JCheckBox jCheckBox21 = new JCheckBox("1.1");
     private static JCheckBox jCheckBox22 = new JCheckBox("1.2");
     private static JCheckBox jCheckBox23 = new JCheckBox("最高");
     private static JCheckBox jCheckBox24 = new JCheckBox("最低");
     private static JCheckBox jCheckBox25 = new JCheckBox("今开");
 
+    //倍数
     private static JCheckBox jCheckBox31 = new JCheckBox("1.1");
     private static JCheckBox jCheckBox32 = new JCheckBox("1.2");
     private static JCheckBox jCheckBox33 = new JCheckBox("最高");
     private static JCheckBox jCheckBox34 = new JCheckBox("最低");
     private static JCheckBox jCheckBox35 = new JCheckBox("今开");
 
+    //阶梯数
     private static JCheckBox jCheckBox41 = new JCheckBox("1.1");
     private static JCheckBox jCheckBox42 = new JCheckBox("1.2");
     private static JCheckBox jCheckBox43 = new JCheckBox("最高");
     private static JCheckBox jCheckBox44 = new JCheckBox("最低");
     private static JCheckBox jCheckBox45 = new JCheckBox("今开");
 
+    //自定义数
+    private static JCheckBox jCheckBox51 = new JCheckBox("1.1");
+    private static JCheckBox jCheckBox52 = new JCheckBox("1.2");
+    private static JCheckBox jCheckBox53 = new JCheckBox("最高");
+    private static JCheckBox jCheckBox54 = new JCheckBox("最低");
+    private static JCheckBox jCheckBox55 = new JCheckBox("今开");
+
+    static {
+        jCheckBox00.setSelected(true);
+        jCheckBox01.setSelected(true);
+        jCheckBox02.setSelected(true);
+        jCheckBox03.setSelected(true);
+        jCheckBox04.setSelected(true);
+        jCheckBox05.setSelected(true);
+        jCheckBox11.setSelected(true);
+        jCheckBox12.setSelected(true);
+        jCheckBox13.setSelected(true);
+        jCheckBox14.setSelected(true);
+        jCheckBox15.setSelected(true);
+        jCheckBox21.setSelected(true);
+        jCheckBox22.setSelected(true);
+        jCheckBox23.setSelected(true);
+        jCheckBox24.setSelected(true);
+        jCheckBox25.setSelected(true);
+        jCheckBox31.setSelected(true);
+        jCheckBox32.setSelected(true);
+        jCheckBox33.setSelected(true);
+        jCheckBox34.setSelected(true);
+        jCheckBox35.setSelected(true);
+        jCheckBox41.setSelected(true);
+        jCheckBox42.setSelected(true);
+        jCheckBox43.setSelected(true);
+        jCheckBox44.setSelected(true);
+        jCheckBox45.setSelected(true);
+        jCheckBox51.setSelected(true);
+        jCheckBox52.setSelected(true);
+        jCheckBox53.setSelected(true);
+        jCheckBox54.setSelected(true);
+        jCheckBox55.setSelected(true);
+    }
+
 
     private static JButton next ;
     private static final JTextArea msgTextArea = new JTextArea(10, 30);
     private static final JTextArea overTextArea = new JTextArea(5, 30);
     private static final JFrame jf = new JFrame("Excel小工具");
-    private static final List<JCheckBox> J_CHECK_BOXES = new ArrayList<>();
+//    private static final List<JCheckBox> J_CHECK_BOXES = new ArrayList<>();
     private static final JTextField inputDesign=new JTextField(30);
 
     public static void main(String[] args) throws Exception {
@@ -139,7 +184,12 @@ public class ExcelUtilApplication {
         jCheckBox25.setBounds(340+30,70,60,15);
 
         label5.setBounds(10,100,70,23);
-        inputDesign.setBounds(85,100,200,22);
+        jCheckBox51.setBounds(70+30, 100,60,15);
+        jCheckBox52.setBounds(130+30,100,60,15);
+        jCheckBox53.setBounds(200+30,100,60,15);
+        jCheckBox54.setBounds(270+30,100,60,15);
+        jCheckBox55.setBounds(340+30,100,60,15);
+        inputDesign.setBounds(450,100,80,22);
         panel2.add(inputDesign);
 
         label6.setBounds(10,125,70,15);
@@ -164,22 +214,22 @@ public class ExcelUtilApplication {
         panel2.add(label6);
         panel2.add(label7);
 
-        J_CHECK_BOXES.add(jCheckBox01);
-        J_CHECK_BOXES.add(jCheckBox02);
-        J_CHECK_BOXES.add(jCheckBox03);
-        J_CHECK_BOXES.add(jCheckBox04);
-        J_CHECK_BOXES.add(jCheckBox05);
-        J_CHECK_BOXES.add(jCheckBox00);
-        J_CHECK_BOXES.forEach(t->{
-            t.addChangeListener(new ChangeListener() {
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    // 获取事件源（即复选框本身）
-                    JCheckBox checkBox = (JCheckBox) e.getSource();
-                    System.out.println(checkBox.getText() + " 是否选中: " + checkBox.isSelected());
-                }
-            });
-        });
+//        J_CHECK_BOXES.add(jCheckBox01);
+//        J_CHECK_BOXES.add(jCheckBox02);
+//        J_CHECK_BOXES.add(jCheckBox03);
+//        J_CHECK_BOXES.add(jCheckBox04);
+//        J_CHECK_BOXES.add(jCheckBox05);
+//        J_CHECK_BOXES.add(jCheckBox00);
+//        J_CHECK_BOXES.forEach(t->{
+//            t.addChangeListener(new ChangeListener() {
+//                @Override
+//                public void stateChanged(ChangeEvent e) {
+//                    // 获取事件源（即复选框本身）
+//                    JCheckBox checkBox = (JCheckBox) e.getSource();
+//                    System.out.println(checkBox.getText() + " 是否选中: " + checkBox.isSelected());
+//                }
+//            });
+//        });
         panel2.add(jCheckBox00);
 
         panel2.add(jCheckBox01);
@@ -212,6 +262,12 @@ public class ExcelUtilApplication {
         panel2.add(jCheckBox43);
         panel2.add(jCheckBox44);
         panel2.add(jCheckBox45);
+
+        panel2.add(jCheckBox51);
+        panel2.add(jCheckBox52);
+        panel2.add(jCheckBox53);
+        panel2.add(jCheckBox54);
+        panel2.add(jCheckBox55);
 
 
 
@@ -308,19 +364,7 @@ public class ExcelUtilApplication {
         LinkedHashSet<ExDataCalculate> resultSet = new LinkedHashSet<>();
         List<ExDataCalculate> dt = readData.stream().map(BgConverter::convert).collect(Collectors.toList());
 //            List<ExData> collect = dt.stream().map(BgConverter::revert).collect(Collectors.toList());
-        //整数
-        dt.forEach(t->{
-            if((!t.getCode().startsWith("30"))&&t.getOnePointOneTime()!=null&&new BigDecimal(t.getOnePointOneTime().intValue()).compareTo(t.getOnePointOneTime())==0){
-                t.setRemark(t.getRemark()+"代码非30开始，1.1倍为整数;");
-                resultSet.add(t);
-            }else{
-                if(t.getOnePointTwoTime()!=null&&new BigDecimal(t.getOnePointTwoTime().intValue()).compareTo(t.getOnePointTwoTime())==0){
-                    t.setRemark(t.getRemark()+"代码30开始，1.2倍为整数;");
-                    resultSet.add(t);
-                }
-            }
-        });
-
+        filterData(resultSet, dt);
 
 
         resultSet.forEach(t->{
@@ -357,6 +401,95 @@ public class ExcelUtilApplication {
         msgTextArea.append("处理完毕，文件保存到: " + file.getAbsolutePath() + "\n\n");
     }
 
+    private static void filterData(LinkedHashSet<ExDataCalculate> resultSet, List<ExDataCalculate> dt) {
+        //整数
+        if(jCheckBox00.isSelected()){
+            dt.forEach(t->{
+                if((t.getCode().startsWith("30"))){
+                    if(t.getOnePointTwoTime()!=null&&new BigDecimal(t.getOnePointTwoTime().intValue()).compareTo(t.getOnePointTwoTime())==0){
+                        t.setRemark(t.getRemark()+"代码30开始，1.2倍为整数;");
+                        resultSet.add(t);
+                    }
+                }else{
+                    if(t.getOnePointOneTime()!=null&&new BigDecimal(t.getOnePointOneTime().intValue()).compareTo(t.getOnePointOneTime())==0){
+                        t.setRemark(t.getRemark()+"代码非30开始，1.1倍为整数;");
+                        resultSet.add(t);
+                    }
+                }
+            });
+        }
+        //反数
+        dt.forEach(t->{
+            if(jCheckBox01.isSelected()&&isRevertNumber(t.getOnePointOneTime())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"1.1倍是反数;");
+            }
+            if(jCheckBox02.isSelected()&&isRevertNumber(t.getOnePointTwoTime())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"1.2倍是反数;");
+            }
+            if(jCheckBox03.isSelected()&&isRevertNumber(t.getBestHigh())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"最高是反数;");
+            }
+            if(jCheckBox04.isSelected()&&isRevertNumber(t.getBestLow())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"最低是反数;");
+            }
+            if(jCheckBox05.isSelected()&&isRevertNumber(t.getNowOpen())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"今开是反数;");
+            }
+        });
+        //阶梯数
+        dt.forEach(t->{
+            if(jCheckBox41.isSelected()&&isStepNumber(t.getOnePointOneTime())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"1.1倍是阶梯数;");
+            }
+            if(jCheckBox42.isSelected()&&isStepNumber(t.getOnePointTwoTime())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"1.2倍是阶梯数;");
+            }
+            if(jCheckBox43.isSelected()&&isStepNumber(t.getBestHigh())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"最高是阶梯数;");
+            }
+            if(jCheckBox44.isSelected()&&isStepNumber(t.getBestLow())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"最低是阶梯数;");
+            }
+            if(jCheckBox45.isSelected()&&isStepNumber(t.getNowOpen())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"今开是阶梯数;");
+            }
+        });
+
+        //倍数
+        dt.forEach(t->{
+            if(jCheckBox31.isSelected()&&isMutiNumber(t.getOnePointOneTime())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"1.1倍是倍数;");
+            }
+            if(jCheckBox32.isSelected()&&isMutiNumber(t.getOnePointTwoTime())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"1.2倍是倍数;");
+            }
+            if(jCheckBox33.isSelected()&&isMutiNumber(t.getBestHigh())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"最高是倍数;");
+            }
+            if(jCheckBox34.isSelected()&&isMutiNumber(t.getBestLow())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"最低是倍数;");
+            }
+            if(jCheckBox35.isSelected()&&isMutiNumber(t.getNowOpen())){
+                resultSet.add(t);
+                t.setRemark(t.getRemark()+"今开是倍数;");
+            }
+        });
+
+    }
 
 
     private static void setAlias(ExcelReader reader) {

@@ -153,14 +153,11 @@ public class BgConverter {
             exDataCalculate.setYesterdayEnd(new BigDecimal(exData.getYesterdayEnd()));
         }
 
-        //1.1
+        //1.1  1.2
         if(exDataCalculate.getNowPrice()!=null){
-            exDataCalculate.setOnePointOneTime(exDataCalculate.getNowPrice().multiply(opOne));
-            exDataCalculate.setOnePointTwoTime(exDataCalculate.getNowPrice().multiply(opTwo));
+            exDataCalculate.setOnePointOneTime(exDataCalculate.getNowPrice().multiply(opOne).setScale(2,BigDecimal.ROUND_HALF_UP));
+            exDataCalculate.setOnePointTwoTime(exDataCalculate.getNowPrice().multiply(opTwo).setScale(2,BigDecimal.ROUND_HALF_UP));
         }
-
-
-        //1.2
 
         return exDataCalculate;
     }
