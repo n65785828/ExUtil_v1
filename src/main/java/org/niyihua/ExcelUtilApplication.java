@@ -75,6 +75,7 @@ public class ExcelUtilApplication {
     private static JCheckBox jCheckBox54 = new JCheckBox("最低");
     private static JCheckBox jCheckBox55 = new JCheckBox("今开");
 
+    private static final JTextField inputDesign=new JTextField(30);
     static {
         record.put("00",jCheckBox00);
         record.put("01",jCheckBox01);
@@ -115,17 +116,20 @@ public class ExcelUtilApplication {
                 e.printStackTrace();
             }
         }else{
-            try(FileInputStream fileInputStream = new FileInputStream(file)) {
+            try(FileInputStream fileInputStream = new FileInputStream(file);
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
+            ) {
                 byte[] buf = new byte[1024];
-                int len = 0;
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                while ((len=fileInputStream.read(buf))!=-1){
-                    byteArrayOutputStream.write(buf,0,len);
+                String str = bufferedReader.readLine();
+                String input = bufferedReader.readLine();
+                if(StrUtil.isNotEmpty(str)){
+                    String[] s = str.split(" ");
+                    for (String s0 :s){
+                        record.get(s0).setSelected(true);
+                    }
                 }
-                String str = new String(byteArrayOutputStream.toByteArray());
-                String[] s = str.split(" ");
-                for (String s0 :s){
-                    record.get(s0).setSelected(true);
+                if(StrUtil.isNotEmpty(input)){
+                    inputDesign.setText(input);
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -172,7 +176,7 @@ public class ExcelUtilApplication {
     private static final JTextArea overTextArea = new JTextArea(5, 30);
     private static final JFrame jf = new JFrame("Excel小工具");
 //    private static final List<JCheckBox> J_CHECK_BOXES = new ArrayList<>();
-    private static final JTextField inputDesign=new JTextField(30);
+
 
     public static void main(String[] args) throws Exception {
         jf.setSize(600, 400);
@@ -253,7 +257,7 @@ public class ExcelUtilApplication {
         jCheckBox53.setBounds(200+30,100,60,15);
         jCheckBox54.setBounds(270+30,100,60,15);
         jCheckBox55.setBounds(340+30,100,60,15);
-        inputDesign.setBounds(450,100,80,22);
+        inputDesign.setBounds(450,100,120,22);
         panel2.add(inputDesign);
 
         label6.setBounds(10,125,70,15);
@@ -457,6 +461,10 @@ public class ExcelUtilApplication {
                 if (jCheckBox.isSelected()){
                     fileOutputStream.write((ss+" ").getBytes(StandardCharsets.UTF_8));
                 }
+            }
+            fileOutputStream.write("\n".getBytes(StandardCharsets.UTF_8));
+            if(StrUtil.isNotEmpty(inputDesign.getText())){
+                fileOutputStream.write((inputDesign.getText()+"\n").getBytes(StandardCharsets.UTF_8));
             }
             fileOutputStream.flush();
         } catch (FileNotFoundException e) {
