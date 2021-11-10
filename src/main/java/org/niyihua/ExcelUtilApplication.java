@@ -433,20 +433,22 @@ public class ExcelUtilApplication {
 //            List<ExData> collect = dt.stream().map(BgConverter::revert).collect(Collectors.toList());
         filterData(resultSet, dt);
 
-
-        resultSet.forEach(t->{
+        LinkedHashSet<ExDataCalculate> resultSet2 = new LinkedHashSet<>();
+        resultSet2.addAll(resultSet.stream().filter(t->(!t.getCode().startsWith("30"))).collect(Collectors.toList()));
+        resultSet2.addAll(resultSet);
+        resultSet2.forEach(t->{
             Map<String,Object> map  = new LinkedHashMap<>();
             map.put("代码",t.getCode());
             map.put("名称",t.getName());
             map.put("涨幅%",t.getUpV()==null?"--":t.getUpV().doubleValue());
-            map.put("涨速%",t.getUpSpeed()==null?"--":t.getUpSpeed().doubleValue());
+//            map.put("涨速%",t.getUpSpeed()==null?"--":t.getUpSpeed().doubleValue());
             map.put("开盘%",t.getOpenP()==null?"--":t.getOpenP().doubleValue());
-            map.put("现量",t.getNowVolume()==null?"--":t.getNowVolume().doubleValue());
-            map.put("流通市值Z",t.getLiuTongZ()==null?"--":t.getLiuTongZ().toString()+"亿");
-            map.put("总金额",t.getTotalMoney()==null?"--":t.getTotalMoney().doubleValue());
-            map.put("开盘金额",t.getOpenMoney()==null?"--":t.getOpenMoney().doubleValue());
-            map.put("封单额",t.getCloseVar()==null?"--":t.getCloseVar().doubleValue());
-            map.put("流通市值",t.getFlowMarketVaR()==null?"--":t.getFlowMarketVaR().toString()+"亿");
+//            map.put("现量",t.getNowVolume()==null?"--":t.getNowVolume().doubleValue());
+            map.put("流通市值Z",t.getLiuTongZ()==null?"--":t.getLiuTongZ().setScale(0,BigDecimal.ROUND_HALF_UP).intValue()+"亿");
+//            map.put("总金额",t.getTotalMoney()==null?"--":t.getTotalMoney().doubleValue());
+            map.put("开盘金额",t.getOpenMoney()==null?"--":t.getOpenMoney().setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
+            map.put("封单额",t.getCloseVar()==null?"--":t.getCloseVar().setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
+            map.put("流通市值",t.getFlowMarketVaR()==null?"--":t.getFlowMarketVaR().setScale(0,BigDecimal.ROUND_HALF_UP).intValue()+"亿");
             map.put("换手%", t.getChangeHand()==null?"--":t.getChangeHand().doubleValue());
             map.put("现价",t.getNowPrice()==null?"--":t.getNowPrice().doubleValue());
             map.put("1.1倍",t.getOnePointOneTime()==null?"--":t.getOnePointOneTime().doubleValue());
@@ -457,10 +459,10 @@ public class ExcelUtilApplication {
             map.put("最低%",t.getBestLowPer()==null?"--":t.getBestLowPer().doubleValue());
             map.put("最低",t.getBestLow()==null?"--":t.getBestLow().doubleValue());
             map.put("今开",t.getNowOpen()==null?"--":t.getNowOpen().doubleValue());
-            map.put("总量",t.getAllVolume()==null?"--":t.getAllVolume().intValue());
-            map.put("卖价",t.getSalePrice()==null?"--":t.getSalePrice().doubleValue());
+//            map.put("总量",t.getAllVolume()==null?"--":t.getAllVolume().intValue());
+//            map.put("卖价",t.getSalePrice()==null?"--":t.getSalePrice().doubleValue());
             map.put("昨收",t.getYesterdayEnd()==null?"--":t.getYesterdayEnd().doubleValue());
-            map.put("删选条件",t.getRemark());
+            map.put("筛选条件",t.getRemark());
             ds.add(map);
         });
         writer.write(ds);
@@ -638,23 +640,23 @@ public class ExcelUtilApplication {
             dt.forEach(t->{
                 if(jCheckBox51.isSelected()&&t.getOnePointOneTime()!=null&&set.contains(t.getOnePointOneTime().toString())){
                     resultSet.add(t);
-                    t.setRemark(t.getRemark()+"1.1倍包含于自定义数（"+text+"）中;");
+                    t.setRemark(t.getRemark()+"1.1倍含自定义数（"+text+"）中;");
                 }
                 if(jCheckBox52.isSelected()&&t.getOnePointTwoTime()!=null&&set.contains(t.getOnePointTwoTime().toString())){
                     resultSet.add(t);
-                    t.setRemark(t.getRemark()+"1.2倍含于自定义数（"+text+"）中;");
+                    t.setRemark(t.getRemark()+"1.2倍含自定义数（"+text+"）中;");
                 }
                 if(jCheckBox53.isSelected()&&t.getBestHigh()!=null&&set.contains(t.getBestHigh().toString())){
                     resultSet.add(t);
-                    t.setRemark(t.getRemark()+"最高含于自定义数（"+text+"）中;");
+                    t.setRemark(t.getRemark()+"最高含自定义数（"+text+"）中;");
                 }
                 if(jCheckBox54.isSelected()&&t.getBestLow()!=null&&set.contains(t.getBestLow().toString())){
                     resultSet.add(t);
-                    t.setRemark(t.getRemark()+"最低含于自定义数（"+text+"）中;");
+                    t.setRemark(t.getRemark()+"最低含自定义数（"+text+"）中;");
                 }
                 if(jCheckBox55.isSelected()&&t.getNowOpen()!=null&&set.contains(t.getNowOpen().toString())){
                     resultSet.add(t);
-                    t.setRemark(t.getRemark()+"今开含于自定义数（"+text+"）中;");
+                    t.setRemark(t.getRemark()+"今开含自定义数（"+text+"）中;");
                 }
             });
         }

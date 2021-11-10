@@ -15,7 +15,8 @@ public class NumberUtil {
         if(str.length!=2){
             return false;
         }
-        if(StrUtil.equals(str[0],new StringBuilder(str[1]).reverse().toString())){
+        String revert = new StringBuilder(str[1]).reverse().toString();
+        if(StrUtil.equals(str[0],revert)&&(!StrUtil.equals(str[0],str[1]))){
             return true;
         }
         return false;
@@ -50,7 +51,6 @@ public class NumberUtil {
     }
 
     public static void main(String[] args) {
-
 
     }
 
