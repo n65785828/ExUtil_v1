@@ -478,6 +478,8 @@ public class ExcelUtilApplication {
             fileOutputStream.write("\n".getBytes(StandardCharsets.UTF_8));
             if(StrUtil.isNotEmpty(inputDesign.getText())){
                 fileOutputStream.write((inputDesign.getText()+"\n").getBytes(StandardCharsets.UTF_8));
+            }else{
+                fileOutputStream.write(("\n").getBytes(StandardCharsets.UTF_8));
             }
             if(StrUtil.isNotEmpty(readPath)){
                 fileOutputStream.write((readPath +"\n").getBytes(StandardCharsets.UTF_8));
@@ -812,7 +814,7 @@ public class ExcelUtilApplication {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 count1++;
-                if(count1==52000){
+                if(count1==5200){
                     JOptionPane.showMessageDialog(null, "♥♥♥♥ Marry me ,Little fairy ♥♥♥♥");
                 }
             }
