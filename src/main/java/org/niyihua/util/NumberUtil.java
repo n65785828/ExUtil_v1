@@ -32,17 +32,25 @@ public class NumberUtil {
         if(array.length==2){
             int i0 = Integer.parseInt(array[0]);
             int i1 = Integer.parseInt(array[1]);
-            if((i1-i0)==1){
+            if(i1>9&&i0>9&&(i1-i0)==1){
                 return true;
             }
         }
 
         String str = num.toString().replace(".", "");
-        char[] chars = str.toCharArray();
-        if(chars.length<=1){
+        if(str.length()<3){
             return false;
         }
-        for (int i = 1; i < chars.length; i++) {
+        char[] chars = str.toCharArray();
+        if(chars.length==3){
+            for (int i = 1; i < chars.length; i++) {
+                if((chars[i]-chars[i-1])!=1){
+                    return false;
+                }
+            }
+            return true;
+        }
+        for (int i = 2; i < chars.length; i++) {
             if((chars[i]-chars[i-1])!=1){
                 return false;
             }
@@ -113,7 +121,7 @@ public class NumberUtil {
         if(i0==0){
             return false;
         }
-        if(i1%i0==0&&i1/i0>0){
+        if(i1%i0==0&&(i1/i0==2||i1/i0==3)){
             return true;
         }
         return false;
