@@ -10,7 +10,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 
-public class MD5 {
+public class MD5 implements Encrypt{
 
 	/**
 	 * 返回大写的md5加密字符串
@@ -88,4 +88,13 @@ public class MD5 {
 		return sb.toString();
 	}
 
+	@Override
+	public String encrypt(String plain, String key) {
+		return encrypt(plain);
+	}
+
+	@Override
+	public String decrypt(String cipher, String key) {
+		return "MD5不支持解密";
+	}
 }

@@ -1,8 +1,6 @@
 package org.niyihua.encrypt.utils;
 
 
-import cn.hutool.core.lang.Validator;
-
 import java.math.BigDecimal;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -49,13 +47,6 @@ public class CommonUtil {
     public static String hideCid(String s){
         String regex = "(\\w{6})(\\w+)(\\w{4})";
         return s.replaceAll(regex,"$1******$3");
-    }
-
-    /**
-     * 判断是否是手机号
-     */
-    public static boolean isMobile(String s){
-    	return Validator.isMobile(s);
     }
 
     /**
