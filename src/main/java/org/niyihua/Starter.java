@@ -15,27 +15,27 @@ import static org.niyihua.encrypt.constant.EncryptType.解密;
 
 public class Starter {
     private static final JFrame FRAME = new JFrame("加密小工具");
+    private static final String DESIGN_BY = "-- powered by nyh";
+    private static final EncryptType[] ENCRYPT_TYPES = {加密,解密};
+    private static final EncryptMethod[] ENCRYPT_METHODS = {RSA, EncryptMethod.MD5,SM2,SM4,AES,DES};
     private static final JTextArea INPUT_TEXT_AREA = new JTextArea(3, 30);
     private static final JTextArea OUTPUT_TEXT_AREA = new JTextArea(3, 30);
     private static final JTextArea KEY_TEXT_AREA = new JTextArea(2, 20);
     private static final JComboBox<EncryptMethod> ENCRYPT_MODE = new JComboBox();
-    private static final EncryptMethod[] ENCRYPT_METHODS = {RSA, EncryptMethod.MD5,SM2,SM4,AES,DES};
-    private static final EncryptType[] ENCRYPT_TYPES = {加密,解密};
     private static final JComboBox COMBO_BOX_ENCRYPT_TYPES = new JComboBox();
-    private static final String DESIGN_BY = "-- powered by nyh";
-    private static final JPanel panel = new JPanel();
+    private static final JPanel PANEL = new JPanel();
 
     public static void main(String[] args){
         FRAME.setSize(390, 460);
         FRAME.setLocationRelativeTo(null);
         FRAME.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         paintPanel();
-        FRAME.setContentPane(panel);
+        FRAME.setContentPane(PANEL);
         FRAME.setVisible(true);
     }
 
     private static void paintPanel() {
-        panel.setLayout(null);
+        PANEL.setLayout(null);
         addInputTextArea();
         addKeyTextArea();
         addOutputTextArea();
@@ -53,7 +53,7 @@ public class Starter {
     private static void addSwitchMethodBox() {
         COMBO_BOX_ENCRYPT_TYPES.setModel(new DefaultComboBoxModel(ENCRYPT_TYPES));
         COMBO_BOX_ENCRYPT_TYPES.setBounds(80,230,60,30);
-        panel.add(COMBO_BOX_ENCRYPT_TYPES);
+        PANEL.add(COMBO_BOX_ENCRYPT_TYPES);
     }
 
     /**
@@ -71,7 +71,7 @@ public class Starter {
                 }
             }
         });
-        panel.add(ENCRYPT_MODE);
+        PANEL.add(ENCRYPT_MODE);
     }
 
     /**
@@ -102,7 +102,7 @@ public class Starter {
             OUTPUT_TEXT_AREA.setText(result);
         });
         execute.setBounds(300,230,60,30);
-        panel.add(execute);
+        PANEL.add(execute);
     }
 
     /**
@@ -116,7 +116,7 @@ public class Starter {
             INPUT_TEXT_AREA.setText("");
             KEY_TEXT_AREA.setText("");
         });
-        panel.add(clear);
+        PANEL.add(clear);
     }
 
     /**
@@ -127,13 +127,13 @@ public class Starter {
         JLabel outputLabel = new JLabel();
         outputLabel.setText("输出：");
         outputLabel.setBounds(10,270,60,30);
-        panel.add(outputLabel);
+        PANEL.add(outputLabel);
         //输出文本框
         JScrollPane outPutScrollPane = new JScrollPane();
         OUTPUT_TEXT_AREA.setLineWrap(true);
         outPutScrollPane.setBounds(10,300,350,90);//输出text
         outPutScrollPane.setViewportView(OUTPUT_TEXT_AREA);
-        panel.add(outPutScrollPane);
+        PANEL.add(outPutScrollPane);
     }
 
     /**
@@ -144,12 +144,12 @@ public class Starter {
         JLabel keyLabel = new JLabel();
         keyLabel.setText("秘钥：");
         keyLabel.setBounds(10,115,40,30);
-        panel.add(keyLabel);
+        PANEL.add(keyLabel);
         //秘钥输入框
         JScrollPane keyScrollPane = new JScrollPane();
         keyScrollPane.setBounds(10,145,350,60);
         keyScrollPane.setViewportView(KEY_TEXT_AREA);
-        panel.add(keyScrollPane);
+        PANEL.add(keyScrollPane);
     }
 
     /**
@@ -160,13 +160,13 @@ public class Starter {
         JLabel inputLabel = new JLabel();
         inputLabel.setText("输入：");
         inputLabel.setBounds(10,5,300,15);
-        panel.add(inputLabel);
+        PANEL.add(inputLabel);
         //输入框
         INPUT_TEXT_AREA.setLineWrap(false);
         JScrollPane inputScrollPane = new JScrollPane();
         inputScrollPane.setBounds(10,30,350,80);
         inputScrollPane.setViewportView(INPUT_TEXT_AREA);
-        panel.add(inputScrollPane);
+        PANEL.add(inputScrollPane);
     }
 
     /**
@@ -176,7 +176,7 @@ public class Starter {
         JLabel design = new JLabel(DESIGN_BY);
         design.setFont(new Font("宋体",Font.PLAIN,12));
         design.setBounds(250,380,120,40);
-        panel.add(design);
+        PANEL.add(design);
     }
 
 }
