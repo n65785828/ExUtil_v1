@@ -30,6 +30,7 @@ public class Starter {
         FRAME.setLocationRelativeTo(null);
         FRAME.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         paintPanel();
+        FRAME.setIconImage(new ImageIcon(Starter.class.getClassLoader().getResource("fish.png")).getImage());
         FRAME.setContentPane(PANEL);
         FRAME.setVisible(true);
     }
