@@ -437,6 +437,15 @@ public class ExcelUtilApplication {
         resultSet2.addAll(resultSet.stream().filter(t->(!t.getCode().startsWith("30"))).collect(Collectors.toList()));
         resultSet2.addAll(resultSet);
         resultSet2.forEach(t->{
+            if(t.getUpV()==null&&t.getOpenP()==null&&t.getLiuTongZ()==null){//涨幅% 开盘% 流通市值Z 为空的删除
+                return;
+            }
+            if(t.getLiuTongZ().setScale(0,BigDecimal.ROUND_HALF_UP).intValue()>150){ //去掉流通市值Z大于150的
+                return;
+            }
+            if(t.getChangeHand()!=null&&t.getChangeHand().doubleValue()<1.1){  //去掉 换手低于1.1的
+                return;
+            }
             Map<String,Object> map  = new LinkedHashMap<>();
             map.put("代码",t.getCode());
             map.put("名称",t.getName());
@@ -444,20 +453,20 @@ public class ExcelUtilApplication {
 //            map.put("涨速%",t.getUpSpeed()==null?"--":t.getUpSpeed().doubleValue());
             map.put("开盘%",t.getOpenP()==null?"--":t.getOpenP().doubleValue());
 //            map.put("现量",t.getNowVolume()==null?"--":t.getNowVolume().doubleValue());
-            map.put("流通市值Z",t.getLiuTongZ()==null?"--":t.getLiuTongZ().setScale(0,BigDecimal.ROUND_HALF_UP).intValue()+"亿");
+            map.put("流通市值Z",t.getLiuTongZ()==null?"--":t.getLiuTongZ().setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
 //            map.put("总金额",t.getTotalMoney()==null?"--":t.getTotalMoney().doubleValue());
             map.put("开盘金额",t.getOpenMoney()==null?"--":t.getOpenMoney().setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
             map.put("封单额",t.getCloseVar()==null?"--":t.getCloseVar().setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
-            map.put("流通市值",t.getFlowMarketVaR()==null?"--":t.getFlowMarketVaR().setScale(0,BigDecimal.ROUND_HALF_UP).intValue()+"亿");
+            map.put("流通市值",t.getFlowMarketVaR()==null?"--":t.getFlowMarketVaR().setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
             map.put("换手%", t.getChangeHand()==null?"--":t.getChangeHand().doubleValue());
             map.put("现价",t.getNowPrice()==null?"--":t.getNowPrice().doubleValue());
             map.put("1.1倍",t.getOnePointOneTime()==null?"--":t.getOnePointOneTime().doubleValue());
             map.put("1.2倍",t.getOnePointTwoTime()==null?"--":t.getOnePointTwoTime().doubleValue());
-            map.put("量比",t.getLiangBi()==null?"--":t.getLiangBi().doubleValue());
+//            map.put("量比",t.getLiangBi()==null?"--":t.getLiangBi().doubleValue());
             map.put("最高%",t.getBestHighPer()==null?"--":t.getBestHighPer().doubleValue());
             map.put("最高",t.getBestHigh()==null?"--":t.getBestHigh().doubleValue());
             map.put("最低%",t.getBestLowPer()==null?"--":t.getBestLowPer().doubleValue());
-            map.put("最低",t.getBestLow()==null?"--":t.getBestLow().doubleValue());
+//            map.put("最低",t.getBestLow()==null?"--":t.getBestLow().doubleValue());
             map.put("今开",t.getNowOpen()==null?"--":t.getNowOpen().doubleValue());
 //            map.put("总量",t.getAllVolume()==null?"--":t.getAllVolume().intValue());
 //            map.put("卖价",t.getSalePrice()==null?"--":t.getSalePrice().doubleValue());

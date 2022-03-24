@@ -197,7 +197,7 @@ public class BgConverter {
         if(exDataCalculate.getLiuTongZ()==null){
             exData.setLiuTongZ("--");
         }else{
-            exData.setLiuTongZ(exDataCalculate.getLiuTongZ().toString()+"亿");
+            exData.setLiuTongZ(exDataCalculate.getLiuTongZ().toString());
         }
 
         if(exDataCalculate.getTotalMoney()==null){
@@ -221,7 +221,7 @@ public class BgConverter {
         if(exDataCalculate.getFlowMarketVaR()==null){
             exData.setFlowMarketVaR("--");
         }else{
-            exData.setFlowMarketVaR(exDataCalculate.getFlowMarketVaR().toString()+"亿");
+            exData.setFlowMarketVaR(exDataCalculate.getFlowMarketVaR().toString());
         }
 
         if(exDataCalculate.getChangeHand()==null){
