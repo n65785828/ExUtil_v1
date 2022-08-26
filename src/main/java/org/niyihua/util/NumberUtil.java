@@ -58,10 +58,6 @@ public class NumberUtil {
         return true;
     }
 
-    public static void main(String[] args) {
-
-    }
-
     //todo 11.11  1.1  2.2 是叠字数吗？
     public static boolean isDDNumber(BigDecimal num){
         if(num==null){
@@ -104,7 +100,7 @@ public class NumberUtil {
         return false;
     }
 
-    //todo 倍数   3.9  3.09 是倍数吗?
+    //todo 倍数
     public static boolean isMutiNumber(BigDecimal num){
         if(num==null){
             return false;
@@ -118,10 +114,13 @@ public class NumberUtil {
             return false;
         }
         int i1 = Integer.parseInt(str[1]);
-        if(i0==0){
+        if(i0==0||i1==0){
             return false;
         }
-        if(i1%i0==0&&(i1/i0==2||i1/i0==3)){
+        if(i1<10&&(!str[1].startsWith("0"))){
+            i1*=10;
+        }
+        if(i1%i0==0&&(i1/i0<9)){
             return true;
         }
         return false;

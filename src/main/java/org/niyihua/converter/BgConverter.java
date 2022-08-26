@@ -157,8 +157,10 @@ public class BgConverter {
         if(exDataCalculate.getNowPrice()!=null){
             if(StrUtil.isNotEmpty(exDataCalculate.getCode())&&exDataCalculate.getCode().startsWith("30")){
                 exDataCalculate.setOnePointTwoTime(exDataCalculate.getNowPrice().multiply(opTwo).setScale(2,BigDecimal.ROUND_HALF_UP));
+                exDataCalculate.setOnePoint44Time(exDataCalculate.getOnePointTwoTime().multiply(opTwo).setScale(2,BigDecimal.ROUND_HALF_UP));
             }else{
                 exDataCalculate.setOnePointOneTime(exDataCalculate.getNowPrice().multiply(opOne).setScale(2,BigDecimal.ROUND_HALF_UP));
+                exDataCalculate.setOnePoint21Time(exDataCalculate.getOnePointOneTime().multiply(opOne).setScale(2,BigDecimal.ROUND_HALF_UP));
             }
         }
 

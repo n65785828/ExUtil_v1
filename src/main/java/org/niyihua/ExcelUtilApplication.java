@@ -33,6 +33,9 @@ public class ExcelUtilApplication {
     private static String readPath = null;
     private static String writePath = null;
 
+    private static JButton saveConfigBtn = new JButton("保存筛选方案");
+    private static JButton loadConfigBtn = new JButton("加载筛选方案");
+
     //反数
     private static JCheckBox jCheckBox01 = new JCheckBox("1.1");
     private static JCheckBox jCheckBox02 = new JCheckBox("1.2");
@@ -75,6 +78,9 @@ public class ExcelUtilApplication {
     private static JCheckBox jCheckBox54 = new JCheckBox("最低");
     private static JCheckBox jCheckBox55 = new JCheckBox("今开");
 
+    private static Properties loadConfigProperties = new Properties();
+    private static final JComboBox CONFIG_MODE = new JComboBox();
+
     private static final JTextField inputDesign=new JTextField(30);
     static {
         record.put("00",jCheckBox00);
@@ -109,6 +115,22 @@ public class ExcelUtilApplication {
         record.put("54",jCheckBox54);
         record.put("55",jCheckBox55);
         File file = new File("excelUtilConf.conf");
+        File configLoadingFile = new File("config.properties");
+        if(!configLoadingFile.exists()){
+            try {
+                configLoadingFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            try (InputStream in = new FileInputStream(configLoadingFile)){
+                loadConfigProperties.load(in);
+                CONFIG_MODE.setModel(new DefaultComboBoxModel(loadConfigProperties.keySet().stream().toArray()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         if(!file.exists()){
             try {
                 file.createNewFile();
@@ -330,6 +352,7 @@ public class ExcelUtilApplication {
         overTextArea.setBounds(10,180,360,80);
         panel2.add(overTextArea);
         JButton saveBtn = new JButton("保存");
+
         saveBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -337,7 +360,72 @@ public class ExcelUtilApplication {
             }
         });
         saveBtn.setBounds(160,280,80,35);
+        saveConfigBtn.setBounds(370+70,30,120,35);
+        loadConfigBtn.setBounds(370+70,145,120,35);
+        CONFIG_MODE.setBounds(370+70,180,120,35);
         panel2.add(saveBtn);
+
+        saveConfigBtn.addActionListener(e -> {
+
+
+
+            String str=JOptionPane.showInputDialog(jf,"输入方案名称(不能为空)","保存筛选方案",JOptionPane.PLAIN_MESSAGE);
+            if(StrUtil.isNotBlank(str)){
+                StringBuilder stringBuilder = new StringBuilder();
+                if(StrUtil.isNotBlank(inputDesign.getText())){
+                    stringBuilder.append(inputDesign.getText());
+                }
+                stringBuilder.append(";");
+                Set<String> strings = record.keySet();
+                for (String ss:strings) {
+                    JCheckBox jCheckBox = record.get(ss);
+                    if (jCheckBox.isSelected()){
+                        stringBuilder.append(ss);
+                        stringBuilder.append("-");
+                    }
+                }
+                if(stringBuilder.length()>2){
+                    stringBuilder.setLength(stringBuilder.length()-1);
+                }
+                loadConfigProperties.put(str,stringBuilder.toString());
+                try(OutputStream os = new FileOutputStream(new File("config.properties"))){
+                    loadConfigProperties.store(os,"config set");
+                } catch (IOException ex) {
+                    overTextArea.append("方案保存失败");
+                    return;
+                }
+                CONFIG_MODE.setModel(new DefaultComboBoxModel(loadConfigProperties.keySet().stream().toArray()));
+                overTextArea.append("方案保存成功");
+            }else{
+                JOptionPane.showMessageDialog(jf,"没有保存","消息对话框",JOptionPane.WARNING_MESSAGE);
+            }
+        });
+        loadConfigBtn.addActionListener((e)->{
+            Object selectedItem = CONFIG_MODE.getSelectedItem();
+            if(selectedItem==null){
+                return;
+            }
+            String value = (String) loadConfigProperties.get(selectedItem);
+            if(StrUtil.isNotBlank(value)){
+                String[] split = value.split(";");
+                if(StrUtil.isNotBlank(split[0])){
+                    inputDesign.setText(split[0]);
+                }else{
+                    inputDesign.setText("");
+                }
+                String[] split1 = split[1].split("-");
+                record.values().stream().forEach(t->{
+                    t.setSelected(false);
+                });
+                for (String  s1: split1) {
+                    record.get(s1).setSelected(true);
+                }
+                overTextArea.append("方案加载成功\n\r");
+            }
+        });
+        panel2.add(saveConfigBtn);
+        panel2.add(loadConfigBtn);
+        panel2.add(CONFIG_MODE);
     }
 
 
@@ -434,10 +522,11 @@ public class ExcelUtilApplication {
         filterData(resultSet, dt);
 
         LinkedHashSet<ExDataCalculate> resultSet2 = new LinkedHashSet<>();
-        resultSet2.addAll(resultSet.stream().filter(t->(!t.getCode().startsWith("30"))).collect(Collectors.toList()));
+        resultSet2.addAll(resultSet.stream().filter(t -> (!t.getCode().startsWith("30") && (!t.getCode().startsWith("300")))).collect(Collectors.toList()));
+        resultSet2.addAll(resultSet.stream().filter(t ->  (!t.getCode().startsWith("300"))).collect(Collectors.toList()));
         resultSet2.addAll(resultSet);
         resultSet2.forEach(t->{
-            if(t.getUpV()==null&&t.getOpenP()==null&&t.getLiuTongZ()==null){//涨幅% 开盘% 流通市值Z 为空的删除
+            if(t.getUpV()==null||t.getOpenP()==null||t.getLiuTongZ()==null){//涨幅% 开盘% 流通市值Z 为空的删除
                 return;
             }
             if(t.getLiuTongZ().setScale(0,BigDecimal.ROUND_HALF_UP).intValue()>150){ //去掉流通市值Z大于150的
@@ -461,12 +550,14 @@ public class ExcelUtilApplication {
             map.put("换手%", t.getChangeHand()==null?"--":t.getChangeHand().doubleValue());
             map.put("现价",t.getNowPrice()==null?"--":t.getNowPrice().doubleValue());
             map.put("1.1倍",t.getOnePointOneTime()==null?"--":t.getOnePointOneTime().doubleValue());
+            map.put("1.21倍",t.getOnePoint21Time()==null?"--":t.getOnePoint21Time().doubleValue());
             map.put("1.2倍",t.getOnePointTwoTime()==null?"--":t.getOnePointTwoTime().doubleValue());
+            map.put("1.44倍",t.getOnePoint44Time()==null?"--":t.getOnePoint44Time().doubleValue());
 //            map.put("量比",t.getLiangBi()==null?"--":t.getLiangBi().doubleValue());
             map.put("最高%",t.getBestHighPer()==null?"--":t.getBestHighPer().doubleValue());
             map.put("最高",t.getBestHigh()==null?"--":t.getBestHigh().doubleValue());
             map.put("最低%",t.getBestLowPer()==null?"--":t.getBestLowPer().doubleValue());
-//            map.put("最低",t.getBestLow()==null?"--":t.getBestLow().doubleValue());
+            map.put("最低",t.getBestLow()==null?"--":t.getBestLow().doubleValue());
             map.put("今开",t.getNowOpen()==null?"--":t.getNowOpen().doubleValue());
 //            map.put("总量",t.getAllVolume()==null?"--":t.getAllVolume().intValue());
 //            map.put("卖价",t.getSalePrice()==null?"--":t.getSalePrice().doubleValue());
@@ -503,7 +594,16 @@ public class ExcelUtilApplication {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        msgTextArea.append("处理完毕，文件保存到: " + file.getAbsolutePath() + "\n\n");
+        msgTextArea.append("处理完毕，文件保存到: " + file.getAbsolutePath() + "\n\r");
+        new Thread(()->{
+            try {
+                msgTextArea.append("正在打开文件中.....\n\r");
+                String openOrder = "cmd  /c  start  "+file.getAbsolutePath();
+                Runtime.getRuntime().exec(openOrder);
+            } catch (IOException e) {
+
+            }
+        }).start();
     }
 
     private static void filterData(LinkedHashSet<ExDataCalculate> resultSet, List<ExDataCalculate> dt) {
